@@ -1,0 +1,18 @@
+C#=using System;
+
+namespace CUSTOMNAMESPACE
+{
+    'public class CLASSNAME
+    {'
+        public DTYPE IDNAME { get; set; } //PRIMARY KEY'
+        public DTYPE VARNAME { get; set; }'
+    }
+}
+"JAVA=class CLASSNAME{
+'
+    DTYPE IDNAME; //PRIMARY KEY'
+    DTYPE VARNAME;'
+}
+"PYTHON3=class CLASSNAME():'
+    IDNAME #PRIMARY KEY'
+    VARNAME

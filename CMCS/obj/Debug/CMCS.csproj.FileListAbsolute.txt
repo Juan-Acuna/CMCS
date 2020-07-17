@@ -1,0 +1,10 @@
+E:\Archivos\Proyectos\Visual Studio\CMCS\CMCS\bin\Debug\CMCS.exe.config
+E:\Archivos\Proyectos\Visual Studio\CMCS\CMCS\bin\Debug\CMCS.exe
+E:\Archivos\Proyectos\Visual Studio\CMCS\CMCS\bin\Debug\CMCS.pdb
+E:\Archivos\Proyectos\Visual Studio\CMCS\CMCS\obj\Debug\CMCS.csprojAssemblyReference.cache
+E:\Archivos\Proyectos\Visual Studio\CMCS\CMCS\obj\Debug\CMCS.CMC.resources
+E:\Archivos\Proyectos\Visual Studio\CMCS\CMCS\obj\Debug\CMCS.Properties.Resources.resources
+E:\Archivos\Proyectos\Visual Studio\CMCS\CMCS\obj\Debug\CMCS.csproj.GenerateResource.cache
+E:\Archivos\Proyectos\Visual Studio\CMCS\CMCS\obj\Debug\CMCS.csproj.CoreCompileInputs.cache
+E:\Archivos\Proyectos\Visual Studio\CMCS\CMCS\obj\Debug\CMCS.exe
+E:\Archivos\Proyectos\Visual Studio\CMCS\CMCS\obj\Debug\CMCS.pdb
