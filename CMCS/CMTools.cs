@@ -48,7 +48,6 @@ namespace CMTools
                 case Lenguaje.Python3:
                     extension = ".py";//se reemplazan las cosas
                     sr = new StreamReader(CMConfig.CM_PY);
-                    NS = CMConfig.PYNAMESPACE;
                     NEW[0] = DATA[2][(int)motor, 0];
                     NEW[1] = DATA[2][(int)motor, 1];
                     NEW[2] = DATA[2][(int)motor, 2];
@@ -158,7 +157,7 @@ namespace CMTools
         static String customnamespace = "Model";
         static String csnamespace = "Conection";
         static String javanamespace = "Conection";
-        static String pynamespace = "Conection";
+        static bool models = false;
         /// <summary>
         /// Ubicación del archivo plantilla para las clases.
         /// </summary>
@@ -188,9 +187,9 @@ namespace CMTools
         /// </summary>
         public static String JAVANAMESPACE { get { return javanamespace; } set { javanamespace = value; } }
         /// <summary>
-        /// Namespace para CommandManager en lenguaje Python3. Por defecto su valor es 'Conection'.
+        /// Establece si las clases en Python 3 correspondel a 'models' para Django.
         /// </summary>
-        public static String PYNAMESPACE { get { return pynamespace; } set { pynamespace = value; } }
+        public static bool MODELS { get { return models; } set { models = value; } }
     }
     public class ClassesFileManager
     {
@@ -207,6 +206,7 @@ namespace CMTools
 
         public ClassesFileManager()
         {
+            customNamespace = CMConfig.CUSTOMNAMESPACE;
             Lenguaje lenguaje = Lenguaje.CSharp;
             StreamReader sr = new StreamReader(CMConfig.CS_PC);
             String str = sr.ReadToEnd();
@@ -283,19 +283,29 @@ namespace CMTools
             try
             {
                 Directory.CreateDirectory(ruta + "\\"+customNamespace+"\\");
-                for(int i = 0; i < clases.Count(); i++)
+                if(lenguaje==Lenguaje.Python3 && CMConfig.MODELS)
                 {
-                    StreamWriter sw = new StreamWriter(ruta + "\\" + customNamespace + "\\" + clases[i].ClassName + extension, false);
-                    if (identado || lenguaje==Lenguaje.Python3)
-                    {
-                        sw.Write(str[i]);
-                    }
-                    else
-                    {
-                        sw.Write(str[i].Replace("\n","").Replace("\r","").Replace("\t","").Replace("//PRIMARY KEY", "").Replace("#PRIMARY KEY", " ").Replace("  ", ""));
-                    }
+                    StreamWriter sw = new StreamWriter(ruta + "\\" + customNamespace + "\\models.py", false);
+                    sw.Write(Escritura.Replace("*","\n"));
                     sw.Flush();
                     sw.Close();
+                }
+                else
+                {
+                    for (int i = 0; i < clases.Count(); i++)
+                    {
+                        StreamWriter sw = new StreamWriter(ruta + "\\" + customNamespace + "\\" + clases[i].ClassName + extension, false);
+                        if (identado || lenguaje == Lenguaje.Python3)
+                        {
+                            sw.Write(str[i]);
+                        }
+                        else
+                        {
+                            sw.Write(str[i].Replace("\n", "").Replace("\r", "").Replace("\t", "").Replace("//PRIMARY KEY", "").Replace("#PRIMARY KEY", " ").Replace("  ", ""));
+                        }
+                        sw.Flush();
+                        sw.Close();
+                    }
                 }
                 Console.WriteLine(ruta);
                 Process.Start("explorer", ruta+"\\" + customNamespace + "\\");
@@ -454,19 +464,79 @@ namespace CMTools
         {
             List<String> lista = new List<string>();
             String[] partes = plant.Split('\'');
-            for (int i = 0; i < clases.Count(); i++)
+            if (CMConfig.MODELS)
             {
                 String str = "";
-                str += partes[0].Replace("CLASSNAME", clases[i].ClassName);
-                if (!clases[i].Id.Equals("N/A"))
+                str += partes[0].Replace("IMPORTS", "from django.db import models\n");
+                for (int i = 0; i < clases.Count(); i++)
                 {
-                    str += partes[1].Replace("IDNAME", clases[i].Id);
+                    str += partes[1].Replace("CLASSNAME():", clases[i].ClassName+"(models.Model):");
+                    String algo = "";
+                    if (!clases[i].Id.Equals("N/A") && !clases[i].IdType.Equals("N/A"))
+                    {
+                        switch (clases[i].IdType)
+                        {
+                            case "int":
+                                algo = "= models.FloatField()";
+                                break;
+                            case "char":
+                            case "blob?":
+                            case "clob?":
+                            case "string":
+                                algo = "= models.TextField()";
+                                break;
+                            case "datetime":
+                                algo = "= models.DateTimeField()";
+                                break;
+                            case "bool":
+                                algo = "= models.BooleanField()";
+                                break;
+                        }
+                        str += partes[2].Replace("DTYPE", algo).Replace("IDNAME", clases[i].Id);
+                    }
+                    for (int l = 0; l < clases[i].Atrs.Count(); l++)
+                    {
+                        algo = "";
+                        switch (clases[i].Types[l])
+                        {
+                            case "int":
+                                algo = "= models.FloatField()";
+                                break;
+                            case "char":
+                            case "blob?":
+                            case "clob?":
+                            case "string":
+                                algo = "= models.TextField()";
+                                break;
+                            case "datetime":
+                                algo = "= models.DateTimeField()";
+                                break;
+                            case "bool":
+                                algo = "= models.BooleanField()";
+                                break;
+                        }
+                        str += partes[3].Replace("DTYPE", algo).Replace("VARNAME", clases[i].Atrs[l]);
+                    }
+                    lista.Add(str);
                 }
-                for (int l = 0; l < clases[i].Atrs.Count(); l++)
+            }
+            else
+            {
+                for (int i = 0; i < clases.Count(); i++)
                 {
-                    str += partes[2].Replace("VARNAME", clases[i].Atrs[l]);
+                    String str = "";
+                    str += partes[0].Replace("IMPORTS\n", "");
+                    str += partes[1].Replace("CLASSNAME", clases[i].ClassName).Replace("IMPORTS", "");
+                    if (!clases[i].Id.Equals("N/A"))
+                    {
+                        str += partes[2].Replace("IDNAME", clases[i].Id).Replace(" DTYPE", "");
+                    }
+                    for (int l = 0; l < clases[i].Atrs.Count(); l++)
+                    {
+                        str += partes[3].Replace("VARNAME", clases[i].Atrs[l]).Replace(" DTYPE", ""); ;
+                    }
+                    lista.Add(str);
                 }
-                lista.Add(str);
             }
             return lista;
         }
@@ -484,9 +554,8 @@ namespace CMTools
             }
         }
     }
-
     /// <summary>
-    /// Enum que representa un motor de base de datos.
+    /// Enum que representa un motor de base de datos soportadas.
     /// </summary>
     public enum DBMotor
     {
@@ -496,7 +565,7 @@ namespace CMTools
         SQLite
     }
     /// <summary>
-    /// Enum que representa un lenguaje de programación.
+    /// Enum que representa un lenguaje de programación soportadas.
     /// </summary>
     public enum Lenguaje
     {

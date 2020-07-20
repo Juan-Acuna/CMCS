@@ -262,6 +262,7 @@
             this.btnPCM.TabIndex = 18;
             this.btnPCM.Text = "Preferencias";
             this.btnPCM.UseVisualStyleBackColor = true;
+            this.btnPCM.Click += new System.EventHandler(this.Preferencias);
             // 
             // btnPClases
             // 
@@ -272,6 +273,7 @@
             this.btnPClases.TabIndex = 17;
             this.btnPClases.Text = "Preferencias";
             this.btnPClases.UseVisualStyleBackColor = true;
+            this.btnPClases.Click += new System.EventHandler(this.Preferencias);
             // 
             // chkIClases
             // 
@@ -389,7 +391,6 @@
         private System.Windows.Forms.Label lbMotor;
         private System.Windows.Forms.TextBox txtSalida;
         private System.Windows.Forms.ComboBox cbMotor;
-        private System.Windows.Forms.ComboBox cbLenguaje;
         private System.Windows.Forms.CheckBox chkIClases;
         private System.Windows.Forms.OpenFileDialog ofdEntrada;
         private System.Windows.Forms.FolderBrowserDialog fbdSalida;
@@ -397,6 +398,7 @@
         private System.Windows.Forms.Button btnPCM;
         private System.Windows.Forms.Button btnPClases;
         private System.Windows.Forms.Panel panel3;
+        public System.Windows.Forms.ComboBox cbLenguaje;
     }
 }
 

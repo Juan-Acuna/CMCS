@@ -8,3 +8,4 @@ E:\Archivos\Proyectos\Visual Studio\CMCS\CMCS\obj\Debug\CMCS.csproj.GenerateReso
 E:\Archivos\Proyectos\Visual Studio\CMCS\CMCS\obj\Debug\CMCS.csproj.CoreCompileInputs.cache
 E:\Archivos\Proyectos\Visual Studio\CMCS\CMCS\obj\Debug\CMCS.exe
 E:\Archivos\Proyectos\Visual Studio\CMCS\CMCS\obj\Debug\CMCS.pdb
+E:\Archivos\Proyectos\Visual Studio\CMCS\CMCS\obj\Debug\CMCS.FormConfig.resources

@@ -21,7 +21,6 @@ namespace CMCS
         }
 
         #region Custom
-
         bool usado = false;
         TextReader sr;
         String docOrigen;
@@ -328,6 +327,7 @@ namespace CMCS
             lbLenguaje.Enabled = b;
             cbLenguaje.Enabled = b;
             chkIClases.Enabled = b;
+            btnPClases.Enabled = true;
             EjecutarControler();
         }
 
@@ -336,6 +336,7 @@ namespace CMCS
             bool b = chkCM.Checked;
             lbMotor.Enabled = b;
             cbMotor.Enabled = b;
+            btnPCM.Enabled = true;
             EjecutarControler();
         }
 
@@ -360,6 +361,12 @@ namespace CMCS
                 bool b = CMManager.CreateCMFile(txtSalida.Text, (DBMotor)cbMotor.SelectedIndex, (Lenguaje)cbLenguaje.SelectedIndex);
                 Console.WriteLine(b ? "Creado" : "Fallo");
             }
+        }
+        private void Preferencias(object sender, EventArgs e)
+        {
+            FormConfig f = new FormConfig(this);
+            f.Show();
+            f.Focus();
         }
     }
 }
