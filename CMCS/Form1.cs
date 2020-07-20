@@ -32,7 +32,6 @@ namespace CMCS
         {
             chkClases.Enabled = false;
             chkIClases.Enabled = false;
-            chkICM.Enabled = false;
             lbLenguaje.Enabled = false;
             lbMotor.Enabled = false;
             cbLenguaje.Enabled = false;
@@ -263,7 +262,6 @@ namespace CMCS
         private void CMC_Load(object sender, EventArgs e)
         {
             chkIClases.Checked = true;
-            chkICM.Checked = true;
             DisableElements();
             cbLenguaje.SelectedIndex = 0;
             cbMotor.SelectedIndex = 0;
@@ -338,7 +336,6 @@ namespace CMCS
             bool b = chkCM.Checked;
             lbMotor.Enabled = b;
             cbMotor.Enabled = b;
-            chkICM.Enabled = b;
             EjecutarControler();
         }
 
@@ -353,14 +350,15 @@ namespace CMCS
             {
                 
                 ClassesFileManager cfm = new ClassesFileManager();
-                cfm.Lenguaje = (Lenguaje)cbMotor.SelectedIndex;
+                cfm.Lenguaje = (Lenguaje)cbLenguaje.SelectedIndex;
                 cfm.Identado = chkIClases.Checked;
                 bool b = cfm.MakeClases(Data, txtSalida.Text);
                 Console.WriteLine(b?"Creado":"Fallo");
             }
             if (chkCM.Checked)
             {
-                CMManager.CreateCMFile(txtSalida.Text, (DBMotor)cbMotor.SelectedIndex, Lenguaje.CSharp,chkICM.Checked);
+                bool b = CMManager.CreateCMFile(txtSalida.Text, (DBMotor)cbMotor.SelectedIndex, (Lenguaje)cbLenguaje.SelectedIndex);
+                Console.WriteLine(b ? "Creado" : "Fallo");
             }
         }
     }

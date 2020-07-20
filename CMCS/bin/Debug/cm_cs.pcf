@@ -2,16 +2,25 @@ IMPORTS
 
 namespace CUSTOMNAMESPACE
 {
+    /// <summary>
+    /// Una simple clase en C# que a traves de una conexión MOTORCON permite ejecutar un CRUD completo.
+    /// </summary>
     public class CommandManager
     {
         private MOTORCOMMAND _insert, _delete, _select, _update;
         private String insertar, borrar, buscar, actualizar;
         private MOTORCON con;
+        /// <summary>
+        /// Devuelve una instancia de CommandManager con la conexion (MOTORCON) dada.
+        /// </summary>
         public CommandManager(MOTORCON conexion)
         {
             this.con = conexion;
         }
         #region Comandos
+        /// <summary>
+        /// El metodo Insert solicita dos parametros: el objeto a ser insertado y un boolean especificando si el identificacor del objeto se genera automaticamente desde la base de datos. Por defecto este ultimo es verdadero.
+        /// </summary>
         public bool Insert<T>(T objeto, bool autoId = true) where T : class, new()
         {
             var miembros = typeof(T).GetProperties();
@@ -56,6 +65,9 @@ namespace CUSTOMNAMESPACE
                 return false;
             }
         }
+        /// </summary>
+        /// El metodo Get solicita un parametro "id" de tipo dynamic(puede ser int o String) y devuelve un objeto del tipo especificado segun la id proporcionada.
+        /// </summary>
         public T Get<T>(dynamic id) where T : class, new()
         {
             FormatearComando();
@@ -101,6 +113,9 @@ namespace CUSTOMNAMESPACE
                 return default(T);
             }
         }
+        /// </summary>
+        /// El metodo GetAll no solicita parametros y devuelve una lista de objetos del tipo especificado (List<T> donde T es el tipo de los objetos).
+        /// </summary>
         public List<T> GetAll<T>() where T : class, new()
         {
             String tabla = typeof(T).Name;
@@ -173,6 +188,9 @@ namespace CUSTOMNAMESPACE
                 return null;
             }
         }
+        /// </summary>
+        /// El metodo Update solicita un parametro: un objeto del tipo especificado con los valores a actualizar y el identificador. Devuelve un bool indicando si fue posible realizar la acción.
+        /// </summary>
         public bool Update<T>(T objeto) where T : class, new()
         {
             String tabla = typeof(T).Name;
@@ -206,6 +224,9 @@ namespace CUSTOMNAMESPACE
             }
 
         }
+        /// </summary>
+        /// El metodo Delete solicita un parametro: un objeto del tipo especificado con el identificador. Devuelve un bool indicando si fue posible realizar la acción.
+        /// </summary>
         public bool Delete<T>(T objeto) where T : class, new()
         {
             String tabla = typeof(T).Name;

@@ -14,18 +14,14 @@ namespace CMTools
     {
         public static List<T>  
     }*/
-    public class CMManager
+    public static class CMManager
     {
         private static String cont_CM = "";
         private static List<String[,]> DATA;
         private static String[] NEW;
-        private CMManager instance_ = new CMManager();
-        private CMManager()
+        public static bool CreateCMFile(String ruta,DBMotor motor,Lenguaje lenguaje)
         {
             InstanciateArray();
-        }
-        public static bool CreateCMFile(String ruta,DBMotor motor,Lenguaje lenguaje,bool identado)
-        {
             StreamReader sr = null;
             String extension = ".cs";
             String NS="";
@@ -61,30 +57,24 @@ namespace CMTools
             }
 
             cont_CM = sr.ReadToEnd();
+            cont_CM = cont_CM.Replace("CommandManager", motor.ToString() + "CommandManager");
             cont_CM = cont_CM.Replace("CUSTOMNAMESPACE", NS);
             cont_CM = cont_CM.Replace("IMPORTS", NEW[0]);
             cont_CM = cont_CM.Replace("MOTORCOMMAND", NEW[1]);
             cont_CM = cont_CM.Replace("MOTORCON", NEW[2]);
             cont_CM = cont_CM.Replace("DATAREADER", NEW[3]);
-            StreamWriter sw = new StreamWriter(ruta+"\\"+motor.ToString()+"CommandManager"+extension);
-            if (identado)
-            {
-                sw.Write(cont_CM);
-            }
-            else
-            {
-                sw.Write(cont_CM.Replace("\n", "").Replace("\r", "").Replace("\t", "").Replace("  ", ""));
-            }
+            StreamWriter sw = new StreamWriter(ruta + "\\" + motor.ToString() + "CommandManager" + extension);
+            sw.Write(cont_CM);
             sr.Close();
             sw.Close();
             return true;
         }
-        private void InstanciateArray()
+        private static void InstanciateArray()
         {
             NEW = new String[4];
             DATA = new List<String[,]>();
             //C#
-            DATA[0] = new String[4, 4];
+            DATA.Add(new String[4, 4]);
             //C# - Oracle
             DATA[0][0, 0] = "using System;\nusing System.Collections.Generic;"
                 + "\nusing System.Linq;\nusing System.Text;\nusing System.Threading.Tasks;"
@@ -110,7 +100,7 @@ namespace CMTools
             DATA[0][3, 2] = "NO IMPLEMENTADO AUN";
             DATA[0][3, 3] = "NO IMPLEMENTADO AUN";
             //Java
-            DATA[1] = new String[4, 4];
+            DATA.Add(new String[4, 4]);
             //Java - Oracle
             DATA[1][0, 0] = "import java.sql.Connection;\nimport java.sql.DriverManager;"
                 +"\nimport java.sql.SQLException;\njavax.swing.*;";
@@ -133,7 +123,7 @@ namespace CMTools
             DATA[1][3, 2] = "NO IMPLEMENTADO AUN";
             DATA[1][3, 3] = "NO IMPLEMENTADO AUN";
             //Python3
-            DATA[2] = new String[4, 4];
+            DATA.Add(new String[4, 4]);
             //Python3 - Oracle
             DATA[2][0, 0] = "NO IMPLEMENTADO AUN";
             DATA[2][0, 1] = "NO IMPLEMENTADO AUN";
@@ -188,19 +178,19 @@ namespace CMTools
         /// <summary>
         /// Namespace o Package (dependiendo del lenguaje) para las clases. Por defecto su valor es 'Model'.
         /// </summary>
-        public static String CUSTOMNAMESPACE { get; set; }
+        public static String CUSTOMNAMESPACE { get { return customnamespace; } set { customnamespace = value; } }
         /// <summary>
         /// Namespace para CommandManager en lenguaje C#. Por defecto su valor es 'Conection'.
         /// </summary>
-        public static String CSNAMESPACE { get; set; }
+        public static String CSNAMESPACE { get { return csnamespace; } set { csnamespace = value; } }
         /// <summary>
         /// Package para CommandManager en lenguaje Java. Por defecto su valor es 'Conection'.
         /// </summary>
-        public static String JAVANAMESPACE { get; set; }
+        public static String JAVANAMESPACE { get { return javanamespace; } set { javanamespace = value; } }
         /// <summary>
         /// Namespace para CommandManager en lenguaje Python3. Por defecto su valor es 'Conection'.
         /// </summary>
-        public static String PYNAMESPACE { get; set; }
+        public static String PYNAMESPACE { get { return pynamespace; } set { pynamespace = value; } }
     }
     public class ClassesFileManager
     {
@@ -208,15 +198,16 @@ namespace CMTools
         bool identado = true;
         String Escritura = "";
         String customNamespace = CMConfig.CUSTOMNAMESPACE;
-        Lenguaje lenguaje = Lenguaje.CSharp;
+        Lenguaje lenguaje;
         List<ClassFile> clases = new List<ClassFile>();
 
         public String CustomNamespace { get { return customNamespace; } set { customNamespace = value; } }
-        public Lenguaje Lenguaje { get; set; }
+        public Lenguaje Lenguaje { get { return lenguaje; } set { lenguaje = value; } }
         public bool Identado { get { return identado; } set { identado = value; } }
 
         public ClassesFileManager()
         {
+            Lenguaje lenguaje = Lenguaje.CSharp;
             StreamReader sr = new StreamReader(CMConfig.CS_PC);
             String str = sr.ReadToEnd();
             String[] s1 = str.Split('"');
@@ -260,10 +251,10 @@ namespace CMTools
                     l = MakeCSharp(Bases[0].Replace("C#=", ""));
                     break;
                 case Lenguaje.Java:
-                    l = MakeJava(Bases[2].Replace("JAVA=", ""));
+                    l = MakeJava(Bases[1].Replace("JAVA=", ""));
                     break;
                 case Lenguaje.Python3:
-                    l = MakePython3(Bases[3].Replace("PYTHON3=", ""));
+                    l = MakePython3(Bases[2].Replace("PYTHON3=", ""));
                     break;
             }
             foreach(var item in l)
