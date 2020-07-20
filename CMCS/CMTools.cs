@@ -338,8 +338,8 @@ namespace CMTools
             for (int i = 0; i < clases.Count(); i++)
             {
                 String str = "";
-                //str += partes[0].Replace("CUSTOMNAMESPACE", customNamespace);
-                str += partes[0].Replace("CLASSNAME", clases[i].ClassName);
+                str += partes[0].Replace("CUSTOMNAMESPACE", customNamespace);
+                str += partes[1].Replace("CLASSNAME", clases[i].ClassName);
                 String algo = "";
                 if (!clases[i].Id.Equals("N/A") && !clases[i].IdType.Equals("N/A"))
                 {
@@ -367,7 +367,7 @@ namespace CMTools
                             algo = "String";
                             break;
                     }
-                    str += partes[1].Replace("DTYPE", algo).Replace("IDNAME", clases[i].Id);
+                    str += partes[2].Replace("DTYPE", algo).Replace("IDNAME", clases[i].Id);
                 }
                 for (int l = 0; l < clases[i].Atrs.Count(); l++)
                 {
@@ -396,9 +396,9 @@ namespace CMTools
                             algo = "String";
                             break;
                     }
-                    str += partes[2].Replace("DTYPE", algo).Replace("VARNAME", clases[i].Atrs[l]);
+                    str += partes[3].Replace("DTYPE", algo).Replace("VARNAME", clases[i].Atrs[l]);
                 }
-                str += partes[3];
+                str += partes[4];
                 lista.Add(str);
             }
             return lista;

@@ -8,7 +8,8 @@ namespace CUSTOMNAMESPACE
         public DTYPE VARNAME { get; set; }'
     }
 }
-"JAVA=class CLASSNAME{
+"JAVA=package CUSTOMNAMESPACE;
+'class CLASSNAME{
 '
     DTYPE IDNAME; //PRIMARY KEY'
     DTYPE VARNAME;'
