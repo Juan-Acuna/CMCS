@@ -17,7 +17,6 @@ namespace CMTools
     public class CMManager
     {
         private static String cont_CM = "";
-        private static String[] NEW;
         private static List<String[,]> DATA;
         private CMManager instance_ = new CMManager();
         private CMManager()
@@ -26,33 +25,33 @@ namespace CMTools
         }
         public static bool CreateCMFile(String ruta,DBMotor motor,Lenguaje lenguaje,bool identado)
         {
+            StreamReader sr = new StreamReader(CMConfig.CM_BP);
+            cont_CM = sr.ReadToEnd();
             String extension = ".cs";
             switch (lenguaje)
             {
                 case Lenguaje.CSharp:
-                    extension = ".cs";
-                    NEW[0] = DATA[0][(int)motor, 0];
-                    NEW[1] = DATA[0][(int)motor, 1];
-                    NEW[2] = DATA[0][(int)motor, 2];
-                    NEW[3] = DATA[0][(int)motor, 3];
+                    extension = ".cs";//se reemplazan las cosas
+                    cont_CM = cont_CM.Replace("IMPORTS", DATA[0][(int)motor, 0]);
+                    cont_CM = cont_CM.Replace("MOTORCOMMAND", DATA[0][(int)motor, 1]);
+                    cont_CM = cont_CM.Replace("MOTORCON", DATA[0][(int)motor, 2]);
+                    cont_CM = cont_CM.Replace("DATAREADER", DATA[0][(int)motor, 3]);
                     break;
                 case Lenguaje.Java:
-                    extension = ".java";
-                    //
+                    extension = ".java";//se reemplazan las cosas
+                    cont_CM = cont_CM.Replace("IMPORTS", DATA[1][(int)motor, 0]);
+                    cont_CM = cont_CM.Replace("MOTORCOMMAND", DATA[1][(int)motor, 1]);
+                    cont_CM = cont_CM.Replace("MOTORCON", DATA[1][(int)motor, 2]);
+                    cont_CM = cont_CM.Replace("DATAREADER", DATA[1][(int)motor, 3]);
                     break;
                 case Lenguaje.Python3:
-                    extension = ".py";
-                    //
+                    extension = ".py";//se reemplazan las cosas
+                    cont_CM = cont_CM.Replace("IMPORTS", DATA[2][(int)motor, 0]);
+                    cont_CM = cont_CM.Replace("MOTORCOMMAND", DATA[2][(int)motor, 1]);
+                    cont_CM = cont_CM.Replace("MOTORCON", DATA[2][(int)motor, 2]);
+                    cont_CM = cont_CM.Replace("DATAREADER", DATA[2][(int)motor, 3]);
                     break;
             }
-            StreamReader sr = new StreamReader(CMConfig.CM_BP);
-            cont_CM = sr.ReadToEnd();
-
-            //se reemplazan las cosas
-            cont_CM = cont_CM.Replace("IMPORTS",NEW[0]);
-            cont_CM = cont_CM.Replace("MOTORCOMMAND", NEW[1]);
-            cont_CM = cont_CM.Replace("MOTORCON", NEW[2]);
-            cont_CM = cont_CM.Replace("DATAREADER", NEW[3]);
             StreamWriter sw = new StreamWriter(ruta+"\\"+motor.ToString()+"CommandManager"+extension);
             if (identado)
             {
@@ -68,7 +67,6 @@ namespace CMTools
         }
         private void InstanciateArray()
         {
-            NEW = new String[4];
             DATA = new List<String[,]>();
             //C#
             DATA[0] = new String[4, 4];
