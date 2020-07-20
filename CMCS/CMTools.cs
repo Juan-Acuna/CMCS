@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
+using System.Windows.Forms;
+using System.Threading;
 
 namespace CMTools
 {
@@ -12,43 +14,15 @@ namespace CMTools
     {
         public static List<T>  
     }*/
-    /*public class PocketConsole
-    {
-
-    }*/
     public class CMManager
     {
         private static String cont_CM = "";
         private static String[] NEW;
-        private static String[,] DATA;
+        private static List<String[,]> DATA;
         private CMManager instance_ = new CMManager();
         private CMManager()
         {
-            DATA = new String[4,4];
-            DATA[0, 0] = "using System;\nusing System.Collections.Generic;"
-                + "\nusing System.Linq;\nusing System.Text;\nusing System.Threading.Tasks;"
-                + "\nusing Oracle.ManagedDataAccess.Client;\nusing System.Data; ";
-            DATA[0, 1] = "OracleCommand";
-            DATA[0, 2] = "OracleConection";
-            DATA[0, 3] = "OracleDataReader";
-
-            DATA[1, 0] = "using System;\nusing System.Collections.Generic;"
-                + "\nusing System.Data;\nusing System.Data.SqlClient;\nusing System.IO; ";
-            DATA[1, 1] = "SqlCommand";
-            DATA[1, 2] = "SqlConnection";
-            DATA[1, 3] = "SqlDataReader";
-
-            DATA[2, 0] = "NO IMPLEMENTADO AUN";
-            DATA[2, 1] = "NO IMPLEMENTADO AUN";
-            DATA[2, 2] = "NO IMPLEMENTADO AUN";
-            DATA[2, 3] = "NO IMPLEMENTADO AUN";
-
-            DATA[3, 0] = "NO IMPLEMENTADO AUN";
-            DATA[3, 1] = "NO IMPLEMENTADO AUN";
-            DATA[3, 2] = "NO IMPLEMENTADO AUN";
-            DATA[3, 3] = "NO IMPLEMENTADO AUN";
-
-            NEW = new String[4];
+            InstanciateArray();
         }
         public static bool CreateCMFile(String ruta,DBMotor motor,Lenguaje lenguaje,bool identado)
         {
@@ -57,6 +31,10 @@ namespace CMTools
             {
                 case Lenguaje.CSharp:
                     extension = ".cs";
+                    NEW[0] = DATA[0][(int)motor, 0];
+                    NEW[1] = DATA[0][(int)motor, 1];
+                    NEW[2] = DATA[0][(int)motor, 2];
+                    NEW[3] = DATA[0][(int)motor, 3];
                     break;
                 case Lenguaje.Java:
                     extension = ".java";
@@ -67,10 +45,6 @@ namespace CMTools
                     //
                     break;
             }
-            NEW[0] = DATA[(int)motor, 0];
-            NEW[1] = DATA[(int)motor, 1];
-            NEW[2] = DATA[(int)motor, 2];
-            NEW[3] = DATA[(int)motor, 3];
             StreamReader sr = new StreamReader(CMConfig.CM_BP);
             cont_CM = sr.ReadToEnd();
 
@@ -91,6 +65,78 @@ namespace CMTools
             sr.Close();
             sw.Close();
             return true;
+        }
+        private void InstanciateArray()
+        {
+            NEW = new String[4];
+            DATA = new List<String[,]>();
+            //C#
+            DATA[0] = new String[4, 4];
+            DATA[0][0, 0] = "using System;\nusing System.Collections.Generic;"
+                + "\nusing System.Linq;\nusing System.Text;\nusing System.Threading.Tasks;"
+                + "\nusing Oracle.ManagedDataAccess.Client;\nusing System.Data; ";
+            DATA[0][0, 1] = "OracleCommand";
+            DATA[0][0, 2] = "OracleConection";
+            DATA[0][0, 3] = "OracleDataReader";
+
+            DATA[0][1, 0] = "using System;\nusing System.Collections.Generic;"
+                + "\nusing System.Data;\nusing System.Data.SqlClient;\nusing System.IO; ";
+            DATA[0][1, 1] = "SqlCommand";
+            DATA[0][1, 2] = "SqlConnection";
+            DATA[0][1, 3] = "SqlDataReader";
+
+            DATA[0][2, 0] = "using System;\nusing System.Collections.Generic;"
+                + "\nusing System.Data;\nusing System.Data.MySqlClient;\nusing System.IO; ";
+            DATA[0][2, 1] = "MySqlCommand";
+            DATA[0][2, 2] = "MySqlConnection";
+            DATA[0][2, 3] = "MySqlDataReader";
+
+            DATA[0][3, 0] = "NO IMPLEMENTADO AUN";
+            DATA[0][3, 1] = "NO IMPLEMENTADO AUN";
+            DATA[0][3, 2] = "NO IMPLEMENTADO AUN";
+            DATA[0][3, 3] = "NO IMPLEMENTADO AUN";
+            //Java
+            DATA[1] = new String[4, 4];
+            DATA[1][0, 0] = "NO IMPLEMENTADO AUN";
+            DATA[1][0, 1] = "NO IMPLEMENTADO AUN";
+            DATA[1][0, 2] = "NO IMPLEMENTADO AUN";
+            DATA[1][0, 3] = "NO IMPLEMENTADO AUN";
+
+            DATA[1][1, 0] = "NO IMPLEMENTADO AUN";
+            DATA[1][1, 1] = "NO IMPLEMENTADO AUN";
+            DATA[1][1, 2] = "NO IMPLEMENTADO AUN";
+            DATA[1][1, 3] = "NO IMPLEMENTADO AUN";
+
+            DATA[1][2, 0] = "NO IMPLEMENTADO AUN";
+            DATA[1][2, 1] = "NO IMPLEMENTADO AUN";
+            DATA[1][2, 2] = "NO IMPLEMENTADO AUN";
+            DATA[1][2, 3] = "NO IMPLEMENTADO AUN";
+
+            DATA[1][3, 0] = "NO IMPLEMENTADO AUN";
+            DATA[1][3, 1] = "NO IMPLEMENTADO AUN";
+            DATA[1][3, 2] = "NO IMPLEMENTADO AUN";
+            DATA[1][3, 3] = "NO IMPLEMENTADO AUN";
+            //Python3
+            DATA[2] = new String[4, 4];
+            DATA[2][0, 0] = "NO IMPLEMENTADO AUN";
+            DATA[2][0, 1] = "NO IMPLEMENTADO AUN";
+            DATA[2][0, 2] = "NO IMPLEMENTADO AUN";
+            DATA[2][0, 3] = "NO IMPLEMENTADO AUN";
+
+            DATA[2][1, 0] = "NO IMPLEMENTADO AUN";
+            DATA[2][1, 1] = "NO IMPLEMENTADO AUN";
+            DATA[2][1, 2] = "NO IMPLEMENTADO AUN";
+            DATA[2][1, 3] = "NO IMPLEMENTADO AUN";
+
+            DATA[2][2, 0] = "NO IMPLEMENTADO AUN";
+            DATA[2][2, 1] = "NO IMPLEMENTADO AUN";
+            DATA[2][2, 2] = "NO IMPLEMENTADO AUN";
+            DATA[2][2, 3] = "NO IMPLEMENTADO AUN";
+
+            DATA[2][3, 0] = "NO IMPLEMENTADO AUN";
+            DATA[2][3, 1] = "NO IMPLEMENTADO AUN";
+            DATA[2][3, 2] = "NO IMPLEMENTADO AUN";
+            DATA[2][3, 3] = "NO IMPLEMENTADO AUN";
         }
     }
     public static class CMConfig
