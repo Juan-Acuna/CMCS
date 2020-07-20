@@ -204,10 +204,10 @@ namespace CMTools
                     l = MakeCSharp(Bases[0].Replace("C#=", ""));
                     break;
                 case Lenguaje.Java:
-                    l = MakeJava(Bases[0].Replace("JAVA=", ""));
+                    l = MakeJava(Bases[2].Replace("JAVA=", ""));
                     break;
                 case Lenguaje.Python3:
-                    l = MakePython3(Bases[0].Replace("PYTHON3=", ""));
+                    l = MakePython3(Bases[3].Replace("PYTHON3=", ""));
                     break;
             }
             foreach(var item in l)
