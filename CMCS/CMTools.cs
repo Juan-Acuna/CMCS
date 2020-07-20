@@ -18,6 +18,7 @@ namespace CMTools
     {
         private static String cont_CM = "";
         private static List<String[,]> DATA;
+        private static String[] NEW;
         private CMManager instance_ = new CMManager();
         private CMManager()
         {
@@ -25,33 +26,46 @@ namespace CMTools
         }
         public static bool CreateCMFile(String ruta,DBMotor motor,Lenguaje lenguaje,bool identado)
         {
-            StreamReader sr = new StreamReader(CMConfig.CM_BP);
-            cont_CM = sr.ReadToEnd();
+            StreamReader sr = null;
             String extension = ".cs";
+            String NS="";
             switch (lenguaje)
             {
                 case Lenguaje.CSharp:
                     extension = ".cs";//se reemplazan las cosas
-                    cont_CM = cont_CM.Replace("IMPORTS", DATA[0][(int)motor, 0]);
-                    cont_CM = cont_CM.Replace("MOTORCOMMAND", DATA[0][(int)motor, 1]);
-                    cont_CM = cont_CM.Replace("MOTORCON", DATA[0][(int)motor, 2]);
-                    cont_CM = cont_CM.Replace("DATAREADER", DATA[0][(int)motor, 3]);
+                    sr = new StreamReader(CMConfig.CM_CS);
+                    NS = CMConfig.CSNAMESPACE;
+                    NEW[0] = DATA[0][(int)motor,0];
+                    NEW[1] = DATA[0][(int)motor, 1];
+                    NEW[2] = DATA[0][(int)motor, 2];
+                    NEW[3] = DATA[0][(int)motor, 3];
                     break;
                 case Lenguaje.Java:
                     extension = ".java";//se reemplazan las cosas
-                    cont_CM = cont_CM.Replace("IMPORTS", DATA[1][(int)motor, 0]);
-                    cont_CM = cont_CM.Replace("MOTORCOMMAND", DATA[1][(int)motor, 1]);
-                    cont_CM = cont_CM.Replace("MOTORCON", DATA[1][(int)motor, 2]);
-                    cont_CM = cont_CM.Replace("DATAREADER", DATA[1][(int)motor, 3]);
+                    sr = new StreamReader(CMConfig.CM_JAVA);
+                    NS = CMConfig.JAVANAMESPACE;
+                    NEW[0] = DATA[1][(int)motor, 0];
+                    NEW[1] = DATA[1][(int)motor, 1];
+                    NEW[2] = DATA[1][(int)motor, 2];
+                    NEW[3] = DATA[1][(int)motor, 3];
                     break;
                 case Lenguaje.Python3:
                     extension = ".py";//se reemplazan las cosas
-                    cont_CM = cont_CM.Replace("IMPORTS", DATA[2][(int)motor, 0]);
-                    cont_CM = cont_CM.Replace("MOTORCOMMAND", DATA[2][(int)motor, 1]);
-                    cont_CM = cont_CM.Replace("MOTORCON", DATA[2][(int)motor, 2]);
-                    cont_CM = cont_CM.Replace("DATAREADER", DATA[2][(int)motor, 3]);
+                    sr = new StreamReader(CMConfig.CM_PY);
+                    NS = CMConfig.PYNAMESPACE;
+                    NEW[0] = DATA[2][(int)motor, 0];
+                    NEW[1] = DATA[2][(int)motor, 1];
+                    NEW[2] = DATA[2][(int)motor, 2];
+                    NEW[3] = DATA[2][(int)motor, 3];
                     break;
             }
+
+            cont_CM = sr.ReadToEnd();
+            cont_CM = cont_CM.Replace("CUSTOMNAMESPACE", NS);
+            cont_CM = cont_CM.Replace("IMPORTS", NEW[0]);
+            cont_CM = cont_CM.Replace("MOTORCOMMAND", NEW[1]);
+            cont_CM = cont_CM.Replace("MOTORCON", NEW[2]);
+            cont_CM = cont_CM.Replace("DATAREADER", NEW[3]);
             StreamWriter sw = new StreamWriter(ruta+"\\"+motor.ToString()+"CommandManager"+extension);
             if (identado)
             {
@@ -67,91 +81,133 @@ namespace CMTools
         }
         private void InstanciateArray()
         {
+            NEW = new String[4];
             DATA = new List<String[,]>();
             //C#
             DATA[0] = new String[4, 4];
+            //C# - Oracle
             DATA[0][0, 0] = "using System;\nusing System.Collections.Generic;"
                 + "\nusing System.Linq;\nusing System.Text;\nusing System.Threading.Tasks;"
                 + "\nusing Oracle.ManagedDataAccess.Client;\nusing System.Data; ";
             DATA[0][0, 1] = "OracleCommand";
             DATA[0][0, 2] = "OracleConection";
             DATA[0][0, 3] = "OracleDataReader";
-
+            //C# - SQLServer
             DATA[0][1, 0] = "using System;\nusing System.Collections.Generic;"
                 + "\nusing System.Data;\nusing System.Data.SqlClient;\nusing System.IO; ";
             DATA[0][1, 1] = "SqlCommand";
             DATA[0][1, 2] = "SqlConnection";
             DATA[0][1, 3] = "SqlDataReader";
-
+            //C# - MySQL
             DATA[0][2, 0] = "using System;\nusing System.Collections.Generic;"
                 + "\nusing System.Data;\nusing System.Data.MySqlClient;\nusing System.IO; ";
             DATA[0][2, 1] = "MySqlCommand";
             DATA[0][2, 2] = "MySqlConnection";
             DATA[0][2, 3] = "MySqlDataReader";
-
+            //C# - SQLite
             DATA[0][3, 0] = "NO IMPLEMENTADO AUN";
             DATA[0][3, 1] = "NO IMPLEMENTADO AUN";
             DATA[0][3, 2] = "NO IMPLEMENTADO AUN";
             DATA[0][3, 3] = "NO IMPLEMENTADO AUN";
             //Java
             DATA[1] = new String[4, 4];
-            DATA[1][0, 0] = "NO IMPLEMENTADO AUN";
-            DATA[1][0, 1] = "NO IMPLEMENTADO AUN";
-            DATA[1][0, 2] = "NO IMPLEMENTADO AUN";
-            DATA[1][0, 3] = "NO IMPLEMENTADO AUN";
-
+            //Java - Oracle
+            DATA[1][0, 0] = "import java.sql.Connection;\nimport java.sql.DriverManager;"
+                +"\nimport java.sql.SQLException;\njavax.swing.*;";
+            DATA[1][0, 1] = "Statement";
+            DATA[1][0, 2] = "Connection";
+            DATA[1][0, 3] = "ResulSet";
+            //Java - SQLServer
             DATA[1][1, 0] = "NO IMPLEMENTADO AUN";
             DATA[1][1, 1] = "NO IMPLEMENTADO AUN";
             DATA[1][1, 2] = "NO IMPLEMENTADO AUN";
             DATA[1][1, 3] = "NO IMPLEMENTADO AUN";
-
+            //Java - MySQL
             DATA[1][2, 0] = "NO IMPLEMENTADO AUN";
             DATA[1][2, 1] = "NO IMPLEMENTADO AUN";
             DATA[1][2, 2] = "NO IMPLEMENTADO AUN";
             DATA[1][2, 3] = "NO IMPLEMENTADO AUN";
-
+            //Java - SQLite
             DATA[1][3, 0] = "NO IMPLEMENTADO AUN";
             DATA[1][3, 1] = "NO IMPLEMENTADO AUN";
             DATA[1][3, 2] = "NO IMPLEMENTADO AUN";
             DATA[1][3, 3] = "NO IMPLEMENTADO AUN";
             //Python3
             DATA[2] = new String[4, 4];
+            //Python3 - Oracle
             DATA[2][0, 0] = "NO IMPLEMENTADO AUN";
             DATA[2][0, 1] = "NO IMPLEMENTADO AUN";
             DATA[2][0, 2] = "NO IMPLEMENTADO AUN";
             DATA[2][0, 3] = "NO IMPLEMENTADO AUN";
-
+            //Python3 - SQLServer
             DATA[2][1, 0] = "NO IMPLEMENTADO AUN";
             DATA[2][1, 1] = "NO IMPLEMENTADO AUN";
             DATA[2][1, 2] = "NO IMPLEMENTADO AUN";
             DATA[2][1, 3] = "NO IMPLEMENTADO AUN";
-
+            //Python3 - MySQL
             DATA[2][2, 0] = "NO IMPLEMENTADO AUN";
             DATA[2][2, 1] = "NO IMPLEMENTADO AUN";
             DATA[2][2, 2] = "NO IMPLEMENTADO AUN";
             DATA[2][2, 3] = "NO IMPLEMENTADO AUN";
-
+            //Python3 - SQLite
             DATA[2][3, 0] = "NO IMPLEMENTADO AUN";
             DATA[2][3, 1] = "NO IMPLEMENTADO AUN";
             DATA[2][3, 2] = "NO IMPLEMENTADO AUN";
             DATA[2][3, 3] = "NO IMPLEMENTADO AUN";
         }
     }
+    /// <summary>
+    /// Clase estatica encargada de la configuracion global de las clases y CommandManager.
+    /// </summary>
     public static class CMConfig
     {
-        static String cm_bp = "plantilla_cm.pcf";
-        static String cs_bp = "plantilla_clases.pcf";
-
-        public static String CM_BP { get { return cm_bp; } }
-        public static String CS_BP { get { return cs_bp; } }
+        static String cs_pc = "pc.pcf";
+        static String cm_cs = "cm_cs.pcf";
+        static String cm_java = "cm_java.pcf";
+        static String cm_py = "cm_py.pcf";
+        static String customnamespace = "Model";
+        static String csnamespace = "Conection";
+        static String javanamespace = "Conection";
+        static String pynamespace = "Conection";
+        /// <summary>
+        /// Ubicación del archivo plantilla para las clases.
+        /// </summary>
+        public static String CS_PC { get { return cs_pc; } }
+        /// <summary>
+        /// Ubicación del archivo plantilla para CommandManager en C#.
+        /// </summary>
+        public static String CM_CS { get { return cm_cs; } }
+        /// <summary>
+        /// Ubicación del archivo plantilla para CommandManager en Java.
+        /// </summary>
+        public static String CM_JAVA { get { return cm_java; } }
+        /// <summary>
+        /// Ubicación del archivo plantilla para CommandManager en Python3.
+        /// </summary>
+        public static String CM_PY { get { return cm_py; } }
+        /// <summary>
+        /// Namespace o Package (dependiendo del lenguaje) para las clases. Por defecto su valor es 'Model'.
+        /// </summary>
         public static String CUSTOMNAMESPACE { get; set; }
+        /// <summary>
+        /// Namespace para CommandManager en lenguaje C#. Por defecto su valor es 'Conection'.
+        /// </summary>
+        public static String CSNAMESPACE { get; set; }
+        /// <summary>
+        /// Package para CommandManager en lenguaje Java. Por defecto su valor es 'Conection'.
+        /// </summary>
+        public static String JAVANAMESPACE { get; set; }
+        /// <summary>
+        /// Namespace para CommandManager en lenguaje Python3. Por defecto su valor es 'Conection'.
+        /// </summary>
+        public static String PYNAMESPACE { get; set; }
     }
     public class ClassesFileManager
     {
         List<String> Bases = new List<string>();
         bool identado = true;
         String Escritura = "";
-        String customNamespace = "Model";
+        String customNamespace = CMConfig.CUSTOMNAMESPACE;
         Lenguaje lenguaje = Lenguaje.CSharp;
         List<ClassFile> clases = new List<ClassFile>();
 
@@ -161,7 +217,7 @@ namespace CMTools
 
         public ClassesFileManager()
         {
-            StreamReader sr = new StreamReader(CMConfig.CS_BP);
+            StreamReader sr = new StreamReader(CMConfig.CS_PC);
             String str = sr.ReadToEnd();
             String[] s1 = str.Split('"');
             foreach (var item in s1)
@@ -438,6 +494,9 @@ namespace CMTools
         }
     }
 
+    /// <summary>
+    /// Enum que representa un motor de base de datos.
+    /// </summary>
     public enum DBMotor
     {
         Oracle,
@@ -445,6 +504,9 @@ namespace CMTools
         MySQL,
         SQLite
     }
+    /// <summary>
+    /// Enum que representa un lenguaje de programación.
+    /// </summary>
     public enum Lenguaje
     {
         CSharp,
