@@ -22,8 +22,8 @@ namespace CMCS
 
         #region Custom
         bool usado = false;
-        TextReader sr;
-        String docOrigen;
+        int DocSize = 0;
+        FileHandler fh = new FileHandler();
         List<List<String>> Data;
         String ln;
 
@@ -41,9 +41,165 @@ namespace CMCS
         {
             btnEjecutar.Enabled = ((chkClases.Checked || chkCM.Checked) && txtSalida.Text.Trim().Length > 0);
         }
-        private void DocHandler()
+        public void ConsolePrint(String str)
         {
-            String[] sep = { ";" };
+            ln += str;
+            txtConsole.Lines = ln.Split('\n');
+            Thread.Sleep(10);
+            txtConsole.Refresh();
+            txtConsole.SelectionStart = txtConsole.TextLength;
+            txtConsole.ScrollToCaret();
+        }
+        public void ConsolePrintl(String str)
+        {
+            ConsolePrint(str + "\n");
+        }
+        public void ConsolePrintl()
+        {
+            ConsolePrint("\n");
+        }
+        public void ConsoleDataPrint()
+        {
+            for (int l=0;l<Data.Count();l++)
+            {
+                ConsolePrintl("-------------------------------------------------");
+                ConsolePrintl("TABLA: " + Data[l][0]);
+                ConsolePrintl("-------------------------------------------------");
+                ConsolePrintl("NOMBRE                           TIPO        PK\n");
+                for (int i = 1; i < Data[l].Count(); i++)
+                {
+                    String[] str = Data[l][i].Split(';');
+                    ConsolePrintl(str[0].PadRight(30, ' ') + "   " + str[1].PadRight(12, ' ') + (str.Count() > 2 ? "SI" : "NO"));
+                }
+                ConsolePrintl("-------------------------------------------------");
+                if (l < Data.Count() - 1)
+                {
+                    ConsolePrintl("\n\n");
+                }
+            }
+            usado = true;
+        }
+
+        #endregion
+        private void CMC_Load(object sender, EventArgs e)
+        {
+            chkIClases.Checked = true;
+            DisableElements();
+            cbLenguaje.SelectedIndex = 0;
+            cbMotor.SelectedIndex = 0;
+        }
+
+        private void txtEntrada_TextChanged(object sender, EventArgs e)
+        {
+            if(txtEntrada.Text.Trim().Length > 0)
+            {
+                txtConsole.Visible = true;
+                Data = new List<List<string>>();
+                if (usado)
+                {
+                    ConsolePrint("Limpiando data...");
+                    Thread.Sleep(240);
+                }
+                ln = "";
+                ConsolePrintl(">Leyendo archivo: "+txtEntrada.Text);
+                Thread.Sleep(300);
+                chkClases.Enabled = true;
+                try
+                {
+                    Data = fh.SQLDocHandler(txtEntrada.Text, out DocSize);
+                }
+                catch(Exception ex)
+                {
+                    ConsolePrintl(ex.Message);
+                }
+            }
+            for (int i = 0; i < Convert.ToInt32(DocSize * 0.0005f) + 3; i++)
+            {
+                Thread.Sleep(5);
+                ConsolePrint(".");
+            }
+            Thread.Sleep(10);
+            ConsolePrintl(".");
+            Thread.Sleep(240);
+            ConsolePrintl("Hecho!");
+            Thread.Sleep(10);
+            ConsolePrintl("Tablas encontradas:");
+            ConsoleDataPrint();
+            ConsolePrint(">");
+            EjecutarControler();
+        }
+
+        private void btnEntrada_Click(object sender, EventArgs e)
+        {
+            if(ofdEntrada.ShowDialog() == DialogResult.OK)
+            {
+                txtEntrada.Text = ofdEntrada.FileName;
+            }
+            EjecutarControler();
+        }
+
+        private void btnSalida_Click(object sender, EventArgs e)
+        {
+            if (fbdSalida.ShowDialog() == DialogResult.OK)
+            {
+                txtSalida.Text = fbdSalida.SelectedPath;
+            }
+            EjecutarControler();
+        }
+
+        private void chkClases_CheckedChanged(object sender, EventArgs e)
+        {
+            bool b = chkClases.Checked;
+            lbLenguaje.Enabled = b;
+            cbLenguaje.Enabled = b;
+            chkIClases.Enabled = b;
+            btnPClases.Enabled = b;
+            EjecutarControler();
+        }
+
+        private void chkCM_CheckedChanged(object sender, EventArgs e)
+        {
+            bool b = chkCM.Checked;
+            lbMotor.Enabled = b;
+            cbMotor.Enabled = b;
+            btnPCM.Enabled = b;
+            EjecutarControler();
+        }
+
+        private void btnSalir_Click(object sender, EventArgs e)
+        {
+            this.Dispose();
+        }
+
+        private void btnEjecutar_Click(object sender, EventArgs e)
+        {
+            if (chkClases.Checked)
+            {
+                
+                ClassesFileManager cfm = new ClassesFileManager();
+                cfm.Lenguaje = (Lenguaje)cbLenguaje.SelectedIndex;
+                cfm.Identado = chkIClases.Checked;
+                bool b = cfm.MakeClases(Data, txtSalida.Text);
+                Console.WriteLine(b?"Creado":"Fallo");
+            }
+            if (chkCM.Checked)
+            {
+                bool b = CMManager.CreateCMFile(txtSalida.Text, (DBMotor)cbMotor.SelectedIndex, (Lenguaje)cbLenguaje.SelectedIndex);
+                Console.WriteLine(b ? "Creado" : "Fallo");
+            }
+        }
+        private void Preferencias(object sender, EventArgs e)
+        {
+            FormConfig f = new FormConfig(this);
+            f.Show();
+            f.Focus();
+        }
+    }
+}
+
+
+/*
+String[] sep = { ";" };
             String[] contenido = docOrigen.Split(sep,StringSplitOptions.RemoveEmptyEntries);
             for(int i=0;i<contenido.Count();i++)
             {
@@ -217,156 +373,4 @@ namespace CMCS
             ConsolePrintl("Tablas encontradas:");
             ConsoleDataPrint();
             ConsolePrint(">");
-        }
-        public void ConsolePrint(String str)
-        {
-            ln += str;
-            txtConsole.Lines = ln.Split('\n');
-            Thread.Sleep(10);
-            txtConsole.Refresh();
-            txtConsole.SelectionStart = txtConsole.TextLength;
-            txtConsole.ScrollToCaret();
-        }
-        public void ConsolePrintl(String str)
-        {
-            ConsolePrint(str + "\n");
-        }
-        public void ConsolePrintl()
-        {
-            ConsolePrint("\n");
-        }
-        public void ConsoleDataPrint()
-        {
-            for(int l=0;l<Data.Count();l++)
-            {
-                ConsolePrintl("-------------------------------------------------");
-                ConsolePrintl("TABLA: " + Data[l][0]);
-                ConsolePrintl("-------------------------------------------------");
-                ConsolePrintl("NOMBRE                           TIPO        PK\n");
-                for (int i = 1; i < Data[l].Count(); i++)
-                {
-                    String[] str = Data[l][i].Split(';');
-                    ConsolePrintl(str[0].PadRight(30, ' ') + "   " + str[1].PadRight(12, ' ') + (str.Count() > 2 ? "SI" : "NO"));
-                }
-                ConsolePrintl("-------------------------------------------------");
-                if (l < Data.Count() - 1)
-                {
-                    ConsolePrintl("\n\n");
-                }
-            }
-            usado = true;
-        }
-
-        #endregion
-        private void CMC_Load(object sender, EventArgs e)
-        {
-            chkIClases.Checked = true;
-            DisableElements();
-            cbLenguaje.SelectedIndex = 0;
-            cbMotor.SelectedIndex = 0;
-        }
-
-        private void txtEntrada_TextChanged(object sender, EventArgs e)
-        {
-            if(txtEntrada.Text.Trim().Length > 0)
-            {
-                txtConsole.Visible = true;
-                Data = new List<List<string>>();
-                if (usado)
-                {
-                    ConsolePrint("Limpiando data...");
-                    Thread.Sleep(240);
-                }
-                ln = "";
-                ConsolePrintl(">Leyendo archivo: "+txtEntrada.Text);
-                Thread.Sleep(300);
-                docOrigen = "";
-                chkClases.Enabled = true;
-                String linea;
-                try
-                {
-                    sr = new StreamReader(txtEntrada.Text);
-                    while ((linea = sr.ReadLine()) != null)
-                    {
-                    linea = linea.ToLower().Replace("\t", " ");
-                        if (!linea.Trim().StartsWith("--") && linea.Trim().Length>0)
-                        {
-                            docOrigen += linea;
-                        }
-                    }
-                    sr.Close();
-                }
-                catch(Exception ex)
-                {
-                    ConsolePrintl(ex.Message);
-                }
-                DocHandler();
-            }
-            EjecutarControler();
-        }
-
-        private void btnEntrada_Click(object sender, EventArgs e)
-        {
-            if(ofdEntrada.ShowDialog() == DialogResult.OK)
-            {
-                txtEntrada.Text = ofdEntrada.FileName;
-            }
-        }
-
-        private void btnSalida_Click(object sender, EventArgs e)
-        {
-            if (fbdSalida.ShowDialog() == DialogResult.OK)
-            {
-                txtSalida.Text = fbdSalida.SelectedPath;
-            }
-        }
-
-        private void chkClases_CheckedChanged(object sender, EventArgs e)
-        {
-            bool b = chkClases.Checked;
-            lbLenguaje.Enabled = b;
-            cbLenguaje.Enabled = b;
-            chkIClases.Enabled = b;
-            btnPClases.Enabled = true;
-            EjecutarControler();
-        }
-
-        private void chkCM_CheckedChanged(object sender, EventArgs e)
-        {
-            bool b = chkCM.Checked;
-            lbMotor.Enabled = b;
-            cbMotor.Enabled = b;
-            btnPCM.Enabled = true;
-            EjecutarControler();
-        }
-
-        private void btnSalir_Click(object sender, EventArgs e)
-        {
-            this.Dispose();
-        }
-
-        private void btnEjecutar_Click(object sender, EventArgs e)
-        {
-            if (chkClases.Checked)
-            {
-                
-                ClassesFileManager cfm = new ClassesFileManager();
-                cfm.Lenguaje = (Lenguaje)cbLenguaje.SelectedIndex;
-                cfm.Identado = chkIClases.Checked;
-                bool b = cfm.MakeClases(Data, txtSalida.Text);
-                Console.WriteLine(b?"Creado":"Fallo");
-            }
-            if (chkCM.Checked)
-            {
-                bool b = CMManager.CreateCMFile(txtSalida.Text, (DBMotor)cbMotor.SelectedIndex, (Lenguaje)cbLenguaje.SelectedIndex);
-                Console.WriteLine(b ? "Creado" : "Fallo");
-            }
-        }
-        private void Preferencias(object sender, EventArgs e)
-        {
-            FormConfig f = new FormConfig(this);
-            f.Show();
-            f.Focus();
-        }
-    }
-}
+*/

@@ -82,7 +82,7 @@
             // 
             this.txtJava.Location = new System.Drawing.Point(10, 102);
             this.txtJava.Name = "txtJava";
-            this.txtJava.Size = new System.Drawing.Size(172, 22);
+            this.txtJava.Size = new System.Drawing.Size(219, 22);
             this.txtJava.TabIndex = 5;
             // 
             // label9
@@ -133,7 +133,7 @@
             // 
             this.txtCS.Location = new System.Drawing.Point(10, 102);
             this.txtCS.Name = "txtCS";
-            this.txtCS.Size = new System.Drawing.Size(172, 22);
+            this.txtCS.Size = new System.Drawing.Size(219, 22);
             this.txtCS.TabIndex = 3;
             // 
             // label8
@@ -227,7 +227,7 @@
             // 
             this.txtClases.Location = new System.Drawing.Point(14, 81);
             this.txtClases.Name = "txtClases";
-            this.txtClases.Size = new System.Drawing.Size(198, 22);
+            this.txtClases.Size = new System.Drawing.Size(220, 22);
             this.txtClases.TabIndex = 6;
             // 
             // label4

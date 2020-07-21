@@ -1,19 +1,240 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
-using System.Windows.Forms;
-using System.Threading;
 
 namespace CMTools
 {
-    /*class FileHandler
+    class FileHandler
     {
-        public static List<T>  
-    }*/
+        String DOCUMENT = "";
+        bool CONSTRAINT = false;
+        //List<List<String>> DATA;
+
+        public List<List<String>> SQLDocHandler(String file, out int DocSize)
+        {
+            LoadFile(file);
+            var contenido = SQLLineSpliter(DOCUMENT);
+            contenido = FileCharacterFilter(contenido);
+            var o = SQLTableFilter(contenido);
+            List<String> filtro1 = (List<String>)o[0];
+            List<String[]> pks = (List<String[]>)o[1];
+            List<List<String>> DATA = SQLOrderData(filtro1);
+            DATA = SQLDataTypes(DATA);
+            if (!CONSTRAINT)
+            {
+                DATA = SQLApplyPrimaryKey(DATA, pks);
+            }
+            DocSize = DOCUMENT.Length;
+            return DATA;
+        }
+        private void LoadFile(String file)
+        {
+            DOCUMENT = "";
+            //DATA = new List<List<string>>();
+            String linea;
+            StreamReader sr = new StreamReader(file);
+            while ((linea = sr.ReadLine()) != null)
+            {
+                linea = linea.ToLower().Replace("\t", " ");
+                if (!linea.Trim().StartsWith("--") && linea.Trim().Length > 0)
+                {
+                    DOCUMENT += linea;
+                }
+            }
+            sr.Close();
+        }
+        private String[] SQLLineSpliter(String fileText)
+        {
+            String[] sep = { ";" };
+            String[] contenido = fileText.Split(sep, StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < contenido.Count(); i++)
+            {
+                contenido[i] = contenido[i].TrimEnd().TrimStart();
+            }
+            return contenido;
+        }
+        private String[] FileCharacterFilter(String[] contenido)
+        {
+            //filtro 0
+            String st;
+            for (int l = 0; l < contenido.Length; l++)
+            {
+                st = "";
+                for (int i = 0; i < contenido[l].Length; i++)
+                {
+                    if (((int)contenido[l][i] >= 48 && (int)contenido[l][i] <= 57) || ((int)contenido[l][i] >= 97 && (int)contenido[l][i] <= 122) || (int)contenido[l][i] == 95 || (int)contenido[l][i] == 63 || (int)contenido[l][i] == 44 || (int)contenido[l][i] == 40 || (int)contenido[l][i] == 41 || (int)contenido[l][i] == 32 || (int)contenido[l][i] == 45)
+                    {
+                        st += contenido[l][i];
+                    }
+                }
+                contenido[l] = st;
+            }
+            return contenido;
+        }
+        private Object[] SQLTableFilter(String[] contenido)
+        {
+            List<String> filtro1 = new List<String>();
+            List<String[]> pks = new List<String[]>();
+            foreach (var tx in contenido)
+            {
+                if (tx.Length > 0 && tx.StartsWith("create table"))
+                {
+                    filtro1.Add(tx);
+                }
+                else
+                {
+                    String[] p = new String[2];
+                    if (tx.Length > 0 && tx.StartsWith("alter table") && tx.Contains("primary key"))
+                    {
+                        String[] s2;
+                        String s1 = tx.Trim().Replace("alter table ", "")
+                            .Replace(" add constraint ", ";").Replace(" primary key ", ";")
+                            .Replace("(", "").Replace(")", "").Trim().Replace(" ", "");
+                        s2 = s1.Split(';');
+                        p[0] = s2[0].Trim();
+                        p[1] = s2[2].Trim();
+                        pks.Add(p);
+                    }
+                }
+            }
+            CONSTRAINT = pks.Count() <= 0;
+            Object[] o = new Object[2];
+            o[0] = filtro1;
+            o[1] = pks;
+            return o;
+        }
+        private List<List<String>> SQLOrderData(List<String> filtro1)
+        {
+            List<List<String>> Data = new List<List<string>>();
+            List<String[]> filtro2 = new List<string[]>();
+            String[] sep2 = { "," };
+            foreach (var tx in filtro1)
+            {
+                filtro2.Add(tx.Split(sep2, StringSplitOptions.RemoveEmptyEntries));
+            }
+            List<String> t;
+            foreach (var tx in filtro2)
+            {
+                t = new List<string>();
+                String[] tab = tx[0].Replace("create table ", "").Split('(');
+                t.Add(tab[0].Trim());
+                for (int i = 0; i < tx.Count(); i++)
+                {
+
+                    if (i == 0)
+                    {
+                        t.Add(tx[i].Replace("create table " + tab[0] + "(", "").Trim());
+                    }
+                    else if (i == tx.Count() - 1)
+                    {
+                        t.Add(tx[i].Trim().Replace(")", "").Trim());
+                    }
+                    else
+                    {
+                        t.Add(tx[i].Trim());
+                    }
+                }
+                Data.Add(t);
+            }
+            return Data;
+        }
+        private List<List<String>> SQLDataTypes(List<List<String>> Data)
+        {
+            foreach (var tabla in Data)
+            {
+                for (int i = 1; i < tabla.Count(); i++)
+                {
+                    String[] items;
+                    String[] sep4 = { " " };
+                    items = tabla[i].TrimStart().TrimEnd().Split(sep4, StringSplitOptions.RemoveEmptyEntries);
+                    String typ = "";
+                    if (items[1].Contains("number") || items[1].Contains("numeric") || items[1].Contains("int"))
+                    {
+                        typ = "int";
+                    }
+                    else
+                    if (items[1].Contains("varchar") || items[1].Contains("varchar2"))
+                    {
+                        typ = "string";
+                    }
+                    else
+                    if (items[1].Contains("date") || items[1].Contains("datetime"))
+                    {
+                        typ = "datetime";
+                    }
+                    else
+                    if (items[1].Contains("char"))
+                    {
+                        typ = "char";
+                    }
+                    else
+                    if (items[1].Contains("blob"))
+                    {
+                        typ = "blob?";
+                    }
+                    else
+                    if (items[1].Contains("clob"))
+                    {
+                        typ = "clob?";
+                    }
+                    else
+                    {
+                        typ = "string";
+                    }
+                    bool c = true;
+                    if (CONSTRAINT)
+                    {
+                        foreach (var it in items)
+                        {
+                            if (it.Contains("primary") && i > 1)
+                            {
+                                int p_k = i;
+                                String str = tabla[1];
+                                tabla[1] = items[0] + ";" + typ + ";pk";
+                                tabla[i] = str;
+                                c = false;
+                            }
+                        }
+                    }
+                    if (c)
+                    {
+                        tabla[i] = items[0] + ";" + typ;
+                    }
+                }
+            }
+            return Data;
+        }
+        private List<List<String>> SQLApplyPrimaryKey(List<List<String>> Data, List<String[]> pks)
+        {
+            for (int i = 0; i < Data.Count(); i++)
+            {
+                for (int j = 0; j < pks.Count(); j++)
+                {
+                    if (Data[i][0].Equals(pks[j][0]))
+                    {
+                        for (int m = 1; m < Data[i].Count(); m++)
+                        {
+                            if ((Data[i][m].Split(';')[0]).Equals(pks[j][1]))
+                            {
+                                String str = Data[i][1];
+                                Data[i][1] = Data[i][m] + ";pk";
+
+                                if (m != 1)
+                                {
+                                    Data[i][m] = str;
+                                }
+                                m = Data[i].Count();
+                            }
+                        }
+                        j = pks.Count();
+                    }
+                }
+            }
+            return Data;
+        }
+    }
     public static class CMManager
     {
         private static String cont_CM = "";
@@ -75,29 +296,29 @@ namespace CMTools
             //C#
             DATA.Add(new String[4, 4]);
             //C# - Oracle
-            DATA[0][0, 0] = "using System;\nusing System.Collections.Generic;"
-                + "\nusing System.Linq;\nusing System.Text;\nusing System.Threading.Tasks;"
-                + "\nusing Oracle.ManagedDataAccess.Client;\nusing System.Data; ";
+            DATA[0][0, 0] = "using System;\nusing System.Collections.Generic;\nusing System.Linq;"
+                + "\nusing System.Text;\nusing Oracle.ManagedDataAccess.Client;\nusing System.Data;\nusing System.IO; ";
             DATA[0][0, 1] = "OracleCommand";
             DATA[0][0, 2] = "OracleConection";
             DATA[0][0, 3] = "OracleDataReader";
             //C# - SQLServer
-            DATA[0][1, 0] = "using System;\nusing System.Collections.Generic;"
+            DATA[0][1, 0] = "using System;\nusing System.Collections.Generic;\nusing System.Linq;"
                 + "\nusing System.Data;\nusing System.Data.SqlClient;\nusing System.IO; ";
             DATA[0][1, 1] = "SqlCommand";
             DATA[0][1, 2] = "SqlConnection";
             DATA[0][1, 3] = "SqlDataReader";
             //C# - MySQL
-            DATA[0][2, 0] = "using System;\nusing System.Collections.Generic;"
+            DATA[0][2, 0] = "using System;\nusing System.Collections.Generic;\nusing System.Linq;"
                 + "\nusing System.Data;\nusing System.Data.MySqlClient;\nusing System.IO; ";
             DATA[0][2, 1] = "MySqlCommand";
             DATA[0][2, 2] = "MySqlConnection";
             DATA[0][2, 3] = "MySqlDataReader";
             //C# - SQLite
-            DATA[0][3, 0] = "NO IMPLEMENTADO AUN";
-            DATA[0][3, 1] = "NO IMPLEMENTADO AUN";
-            DATA[0][3, 2] = "NO IMPLEMENTADO AUN";
-            DATA[0][3, 3] = "NO IMPLEMENTADO AUN";
+            DATA[0][3, 0] = "using System;\nusing System.Collections.Generic;\nusing System.Linq;"
+                + "\nusing System.Text;\nusing System.Data.SQLite;\nusing System.IO; ";
+            DATA[0][3, 1] = "SQLiteCommand";
+            DATA[0][3, 2] = "SQLiteConnection";
+            DATA[0][3, 3] = "SQLiteDataReader";
             //Java
             DATA.Add(new String[4, 4]);
             //Java - Oracle
@@ -156,7 +377,7 @@ namespace CMTools
         static String cm_py = "cm_py.pcf";
         static String customnamespace = "Model";
         static String csnamespace = "Conection";
-        static String javanamespace = "Conection";
+        static String javanamespace = "conection";
         static bool models = false;
         /// <summary>
         /// Ubicación del archivo plantilla para las clases.
@@ -395,7 +616,7 @@ namespace CMTools
             for (int i = 0; i < clases.Count(); i++)
             {
                 String str = "";
-                str += partes[0].Replace("CUSTOMNAMESPACE", customNamespace);
+                str += partes[0].Replace("CUSTOMNAMESPACE", customNamespace.ToLower());
                 str += partes[1].Replace("CLASSNAME", clases[i].ClassName);
                 String algo = "";
                 if (!clases[i].Id.Equals("N/A") && !clases[i].IdType.Equals("N/A"))
