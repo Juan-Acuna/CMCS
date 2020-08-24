@@ -22,18 +22,43 @@ namespace CMCS
         {
             InitializeComponent();
             form = f;
-            chkModels.Checked = CMConfig.MODELS;
-            txtClases.Text = CMConfig.CUSTOMNAMESPACE;
-            txtCS.Text = CMConfig.CSNAMESPACE;
-            txtJava.Text = CMConfig.JAVANAMESPACE;
+            Iniciar();
         }
 
         private void btnAceptar_Click(object sender, EventArgs e)
         {
+            bool b = false;
             CMConfig.MODELS = chkModels.Checked;
-            CMConfig.CUSTOMNAMESPACE = txtClases.Text;
-            CMConfig.JAVANAMESPACE = txtJava.Text;
-            CMConfig.CSNAMESPACE = txtCS.Text;
+            if (CMConfig.ValidateNamespace(txtClases.Text))
+            {
+                CMConfig.CUSTOMNAMESPACE = txtClases.Text;
+            }
+            else
+            {
+                b = true;
+            }
+            if (CMConfig.ValidateNamespace(txtJava.Text))
+            {
+                CMConfig.JAVANAMESPACE = txtJava.Text;
+            }
+            else
+            {
+                b = true;
+            }
+            if (CMConfig.ValidateNamespace(txtCS.Text))
+            {
+                CMConfig.CSNAMESPACE = txtCS.Text;
+            }
+            else
+            {
+                b = true;
+            }
+            if (b)
+            {
+                MessageBox.Show("Namespace/Package ingresado esta reservado por el sistema operativo", "Error al ingresar uno o mas Namespace(s)/Package(s)", MessageBoxButtons.OK,MessageBoxIcon.Error);
+                Iniciar();
+                return;
+            }
             Dispose();
         }
         private void btnCancelar_Click(object sender, EventArgs e)
@@ -43,6 +68,13 @@ namespace CMCS
         ~FormConfig()
         {
             form.Focus();
+        }
+        public void Iniciar()
+        {
+            chkModels.Checked = CMConfig.MODELS;
+            txtClases.Text = CMConfig.CUSTOMNAMESPACE;
+            txtCS.Text = CMConfig.CSNAMESPACE;
+            txtJava.Text = CMConfig.JAVANAMESPACE;
         }
     }
 }

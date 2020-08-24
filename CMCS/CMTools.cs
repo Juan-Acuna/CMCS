@@ -22,7 +22,7 @@ namespace CMTools
             List<String[]> pks = (List<String[]>)o[1];
             List<List<String>> DATA = SQLOrderData(filtro1);
             DATA = SQLDataTypes(DATA);
-            if (!CONSTRAINT)
+            if (CONSTRAINT)
             {
                 DATA = SQLApplyPrimaryKey(DATA, pks);
             }
@@ -99,7 +99,7 @@ namespace CMTools
                     }
                 }
             }
-            CONSTRAINT = pks.Count() <= 0;
+            CONSTRAINT = pks.Count() > 0;
             Object[] o = new Object[2];
             o[0] = filtro1;
             o[1] = pks;
@@ -184,23 +184,23 @@ namespace CMTools
                         typ = "string";
                     }
                     bool c = true;
-                    if (CONSTRAINT)
+                    tabla[i] = items[0] + ";" + typ;
+                    if (!CONSTRAINT)
                     {
-                        foreach (var it in items)
+                        if (items[2].Contains("primary"))
                         {
-                            if (it.Contains("primary") && i > 1)
-                            {
-                                int p_k = i;
-                                String str = tabla[1];
-                                tabla[1] = items[0] + ";" + typ + ";pk";
-                                tabla[i] = str;
-                                c = false;
-                            }
+                            tabla[i] = tabla[i] + ";pk";
                         }
                     }
-                    if (c)
+                }
+                for (int it = 2; it < tabla.Count; it++)
+                {
+                    if (tabla[it].Contains(";pk"))
                     {
-                        tabla[i] = items[0] + ";" + typ;
+                        int p_k = it;
+                        String str = tabla[1];
+                        tabla[1] = tabla[it];
+                        tabla[it] = str;
                     }
                 }
             }
@@ -411,6 +411,40 @@ namespace CMTools
         /// Establece si las clases en Python 3 correspondel a 'models' para Django.
         /// </summary>
         public static bool MODELS { get { return models; } set { models = value; } }
+
+        public static bool ValidateNamespace(String str)
+        {
+            str = str.ToUpper();
+            switch (str)
+            {
+                case "CON":
+                case "PRN":
+                case "AUX":
+                case "CLOCK$":
+                case "NUL":
+                case "COM1":
+                case "COM2":
+                case "COM3":
+                case "COM4":
+                case "COM5":
+                case "COM6":
+                case "COM7":
+                case "COM8":
+                case "COM9":
+                case "LPT1":
+                case "LPT2":
+                case "LPT3":
+                case "LPT4":
+                case "LPT5":
+                case "LPT6":
+                case "LPT7":
+                case "LPT8":
+                case "LPT9":
+                    return false;
+                default:
+                    return true;
+            }
+        }
     }
     public class ClassesFileManager
     {

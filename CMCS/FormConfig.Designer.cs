@@ -281,6 +281,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel2);
             this.Name = "FormConfig";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FormConfig";
             this.panel2.ResumeLayout(false);
             this.panel4.ResumeLayout(false);
