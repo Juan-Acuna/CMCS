@@ -296,26 +296,26 @@ namespace CMTools
             //C#
             DATA.Add(new String[4, 4]);
             //C# - Oracle
-            DATA[0][0, 0] = "using System;\nusing System.Collections.Generic;\nusing System.Linq;"
-                + "\nusing System.Text;\nusing Oracle.ManagedDataAccess.Client;\nusing System.Data;\nusing System.IO; ";
+            DATA[0][0, 0] = "using System;\nusing System.Collections.Generic;\nusing Oracle.ManagedDataAccess.Client;"
+                + "\nusing System.Data;\nusing System.Reflection; ";
             DATA[0][0, 1] = "OracleCommand";
-            DATA[0][0, 2] = "OracleConection";
+            DATA[0][0, 2] = "OracleConnection";
             DATA[0][0, 3] = "OracleDataReader";
             //C# - SQLServer
             DATA[0][1, 0] = "using System;\nusing System.Collections.Generic;\nusing System.Linq;"
-                + "\nusing System.Data;\nusing System.Data.SqlClient;\nusing System.IO; ";
+                + "\nusing System.Data;\nusing System.Data.SqlClient;\nusing System.IO;\nusing System.Reflection; ";
             DATA[0][1, 1] = "SqlCommand";
             DATA[0][1, 2] = "SqlConnection";
             DATA[0][1, 3] = "SqlDataReader";
             //C# - MySQL
             DATA[0][2, 0] = "using System;\nusing System.Collections.Generic;\nusing System.Linq;"
-                + "\nusing System.Data;\nusing System.Data.MySqlClient;\nusing System.IO; ";
+                + "\nusing System.Data;\nusing System.Data.MySqlClient;\nusing System.IO;\nusing System.Reflection; ";
             DATA[0][2, 1] = "MySqlCommand";
             DATA[0][2, 2] = "MySqlConnection";
             DATA[0][2, 3] = "MySqlDataReader";
             //C# - SQLite
             DATA[0][3, 0] = "using System;\nusing System.Collections.Generic;\nusing System.Linq;"
-                + "\nusing System.Text;\nusing System.Data.SQLite;\nusing System.IO; ";
+                + "\nusing System.Text;\nusing System.Data.SQLite;\nusing System.IO;\nusing System.Reflection; ";
             DATA[0][3, 1] = "SQLiteCommand";
             DATA[0][3, 2] = "SQLiteConnection";
             DATA[0][3, 3] = "SQLiteDataReader";
