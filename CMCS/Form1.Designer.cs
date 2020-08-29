@@ -339,7 +339,8 @@
             // 
             // ofdEntrada
             // 
-            this.ofdEntrada.Filter = "Archivos de comandos SQL (*.sql, *.txt)|*.sql;*.txt|Todos los archivos|*.*";
+            this.ofdEntrada.Filter = "Archivos de comandos SQL (*.sql, *.ddl, *.txt)|*.sql;*.ddl;*.txt|Todos los archiv" +
+    "os|*.*";
             // 
             // fbdSalida
             // 

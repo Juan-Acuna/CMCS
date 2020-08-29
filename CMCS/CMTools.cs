@@ -26,6 +26,7 @@ namespace CMTools
             {
                 DATA = SQLApplyPrimaryKey(DATA, pks);
             }
+            DATA = Standarize(DATA);
             DocSize = DOCUMENT.Length;
             return DATA;
         }
@@ -89,12 +90,12 @@ namespace CMTools
                     if (tx.Length > 0 && tx.StartsWith("alter table") && tx.Contains("primary key"))
                     {
                         String[] s2;
-                        String s1 = tx.Trim().Replace("alter table ", "")
-                            .Replace(" add constraint ", ";").Replace(" primary key ", ";")
-                            .Replace("(", "").Replace(")", "").Trim().Replace(" ", "");
+                        String s1 = tx.Trim().Replace(" ", "").Trim().Replace("altertable", "")
+                            .Replace("addconstraint", ";").Replace("primarykey", ";")
+                            .Replace("(", "").Replace(")", "");
                         s2 = s1.Split(';');
-                        p[0] = s2[0].Trim();
-                        p[1] = s2[2].Trim();
+                        p[0] = Capitalize(s2[0].Trim());
+                        p[1] = Capitalize(s2[2].Trim());
                         pks.Add(p);
                     }
                 }
@@ -119,7 +120,7 @@ namespace CMTools
             {
                 t = new List<string>();
                 String[] tab = tx[0].Replace("create table ", "").Split('(');
-                t.Add(tab[0].Trim());
+                t.Add(Capitalize(tab[0].Trim()));
                 for (int i = 0; i < tx.Count(); i++)
                 {
 
@@ -184,12 +185,12 @@ namespace CMTools
                         typ = "string";
                     }
                     bool c = true;
-                    tabla[i] = items[0] + ";" + typ;
+                    tabla[i] = Capitalize(items[0]) + ";" + typ;
                     if (!CONSTRAINT)
                     {
                         if (items[2].Contains("primary"))
                         {
-                            tabla[i] = tabla[i] + ";pk";
+                            tabla[i] = Capitalize(tabla[i]) + ";pk";
                         }
                     }
                 }
@@ -233,6 +234,34 @@ namespace CMTools
                 }
             }
             return Data;
+        }
+        public static String Capitalize(String str)
+        {
+            String s = "";
+            foreach (var l in str)
+            {
+                if (l >= 65 && l <= 90)
+                {
+                    s += ((char)(l + 32)).ToString();
+                }
+                else
+                {
+                    s += l.ToString();
+                }
+            }
+            s = ((char)(s[0] - 32)).ToString() + s.Remove(0, 1);
+            return s;
+        }
+        public List<List<String>> Standarize(List<List<String>> data)
+        {
+            for(int i = 0; i < data.Count(); i++)
+            {
+                for(int j = 0; j < data.Count(); j++)
+                {
+                    data[i][0] = data[i][0].Replace(data[j][0].ToLower(), data[j][0]);
+                }
+            }
+            return data;
         }
     }
     public static class CMManager
