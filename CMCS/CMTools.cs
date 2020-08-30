@@ -1,8 +1,14 @@
-﻿using System;
+﻿/*******************
+ * Autor: Juan Acuña.
+ * Version: 1.0.
+ * Fecha: 30-08-2020.
+ *******************/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace CMTools
 {
@@ -38,7 +44,7 @@ namespace CMTools
             StreamReader sr = new StreamReader(file);
             while ((linea = sr.ReadLine()) != null)
             {
-                linea = linea.ToLower().Replace("\t", " ");
+                linea = linea.Replace("\t", " ");
                 if (!linea.Trim().StartsWith("--") && linea.Trim().Length > 0)
                 {
                     DOCUMENT += linea;
@@ -65,7 +71,7 @@ namespace CMTools
                 st = "";
                 for (int i = 0; i < contenido[l].Length; i++)
                 {
-                    if (((int)contenido[l][i] >= 48 && (int)contenido[l][i] <= 57) || ((int)contenido[l][i] >= 97 && (int)contenido[l][i] <= 122) || (int)contenido[l][i] == 95 || (int)contenido[l][i] == 63 || (int)contenido[l][i] == 44 || (int)contenido[l][i] == 40 || (int)contenido[l][i] == 41 || (int)contenido[l][i] == 32 || (int)contenido[l][i] == 45)
+                    if (((int)contenido[l][i] >= 61 && (int)contenido[l][i] <= 90) || ((int)contenido[l][i] >= 48 && (int)contenido[l][i] <= 57) || ((int)contenido[l][i] >= 97 && (int)contenido[l][i] <= 122) || (int)contenido[l][i] == 95 || (int)contenido[l][i] == 63 || (int)contenido[l][i] == 44 || (int)contenido[l][i] == 40 || (int)contenido[l][i] == 41 || (int)contenido[l][i] == 32 || (int)contenido[l][i] == 45)
                     {
                         st += contenido[l][i];
                     }
@@ -80,22 +86,36 @@ namespace CMTools
             List<String[]> pks = new List<String[]>();
             foreach (var tx in contenido)
             {
-                if (tx.Length > 0 && tx.StartsWith("create table"))
+                if (tx.Length > 0 && tx.ToLower().StartsWith("create table"))
                 {
                     filtro1.Add(tx);
                 }
                 else
                 {
                     String[] p = new String[2];
-                    if (tx.Length > 0 && tx.StartsWith("alter table") && tx.Contains("primary key"))
+                    if (tx.Length > 0 && tx.ToLower().StartsWith("alter table") && tx.ToLower().Contains("primary key"))
                     {
                         String[] s2;
-                        String s1 = tx.Trim().Replace(" ", "").Trim().Replace("altertable", "")
-                            .Replace("addconstraint", ";").Replace("primarykey", ";")
-                            .Replace("(", "").Replace(")", "");
+                        String s1 = tx.Trim().Replace(" ","");
+                        s1 = Regex.Replace(s1, "altertable", "", RegexOptions.IgnoreCase);
+                        s1 = Regex.Replace(s1, "addconstraint", ";", RegexOptions.IgnoreCase);
+                        s1 = Regex.Replace(s1, "primarykey", ";", RegexOptions.IgnoreCase);
+                        s1 = s1.Replace("(", "");
+                        s1 = s1.Replace(")", "");
+                        /*
+                         .Trim().Replace("altertable", "")
+                            .Replace("addconstraint", ";")
+                            .Replace("primarykey", ";")
+                            .Replace("(", "")
+                            .Replace(")", "");
+                         */
                         s2 = s1.Split(';');
-                        p[0] = Capitalize(s2[0].Trim());
+                        p[0] = s2[0].Trim();
                         p[1] = Capitalize(s2[2].Trim());
+                        if (p[1].Contains(","))
+                        {
+                            p[1] += "*";
+                        }
                         pks.Add(p);
                     }
                 }
@@ -119,18 +139,27 @@ namespace CMTools
             foreach (var tx in filtro2)
             {
                 t = new List<string>();
-                String[] tab = tx[0].Replace("create table ", "").Split('(');
-                t.Add(Capitalize(tab[0].Trim()));
+                String s = tx[0];
+                s = Regex.Replace(s, "create table ", "", RegexOptions.IgnoreCase);
+                String[] tab = s.Split('(');
+                t.Add(tab[0].Trim());
                 for (int i = 0; i < tx.Count(); i++)
                 {
-
+                    String s2;
                     if (i == 0)
                     {
-                        t.Add(tx[i].Replace("create table " + tab[0] + "(", "").Trim());
+                        s2 = tx[i];
+                        s2 = s2.ToLower();
+                        String temp = "create table " + tab[0].Trim().ToLower();
+                        s2 = s2.Replace(temp, "");
+                        s2 = s2.Replace("(", "");
+                        t.Add(s2.Trim());
                     }
                     else if (i == tx.Count() - 1)
                     {
-                        t.Add(tx[i].Trim().Replace(")", "").Trim());
+                        s2 = tx[i];
+                        s2 = s2.Replace(")", "");
+                        t.Add(s2.Trim());
                     }
                     else
                     {
@@ -149,7 +178,7 @@ namespace CMTools
                 {
                     String[] items;
                     String[] sep4 = { " " };
-                    items = tabla[i].TrimStart().TrimEnd().Split(sep4, StringSplitOptions.RemoveEmptyEntries);
+                    items = tabla[i].ToLower().Trim().Split(sep4, StringSplitOptions.RemoveEmptyEntries);
                     String typ = "";
                     if (items[1].Contains("number") || items[1].Contains("numeric") || items[1].Contains("int"))
                     {
@@ -217,16 +246,33 @@ namespace CMTools
                     {
                         for (int m = 1; m < Data[i].Count(); m++)
                         {
-                            if ((Data[i][m].Split(';')[0]).Equals(pks[j][1]))
+                            bool b = pks[j][1].EndsWith("*");
+                            if ((Data[i][m].Split(';')[0]).Equals(pks[j][1]) || b)
                             {
-                                String str = Data[i][1];
-                                Data[i][1] = Data[i][m] + ";pk";
-
-                                if (m != 1)
+                                if (b)
                                 {
-                                    Data[i][m] = str;
+                                    //(pks[j][1].Contains(Data[i][m].Split(';')[0])
+
+                                    String[] doble = pks[j][1].Replace("*","").Split(',');
+                                    foreach (var x in doble)
+                                    {
+                                        if ((Data[i][m].Split(';')[0]).Equals(Capitalize(x)))
+                                        {
+                                            Data[i][m] = Data[i][m] + ";pk";
+                                        }
+                                    }
                                 }
-                                m = Data[i].Count();
+                                else
+                                {
+                                    String str = Data[i][1];
+                                    Data[i][1] = Data[i][m] + ";pk";
+
+                                    if (m != 1)
+                                    {
+                                        Data[i][m] = str;
+                                    }
+                                    m = Data[i].Count();
+                                }
                             }
                         }
                         j = pks.Count();
