@@ -1,8 +1,13 @@
-﻿/*******************
- * Autor: Juan Acuña.
- * Version: 1.0.
- * Fecha: 30-08-2020.
- *******************/
+﻿/*******************************************************************
+ * Autor: Juan Acuña.                                              *
+ * Archivo: CMTools.cs.                                            *
+ * Version: 1.0.                                                   *
+ * Descripcion: Herramientas para convertir secuencias de creacion *
+ * SQL a clases C#, Python y Java. Tambien permite crear una clase *
+ * Command Manager.                                                *
+ * Fecha: 30-08-2020.                                              *
+ *******************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +28,14 @@ namespace CMTools
             LoadFile(file);
             var contenido = SQLLineSpliter(DOCUMENT);
             contenido = FileCharacterFilter(contenido);
+            Regex r = new Regex("[0-9],[0-9]");
+            for(int i =0;i < contenido.Count();i++)
+            {
+                if (r.IsMatch(contenido[i]))
+                {
+                    contenido[i] = r.Replace(contenido[i], "0.0");
+                }
+            }
             var o = SQLTableFilter(contenido);
             List<String> filtro1 = (List<String>)o[0];
             List<String[]> pks = (List<String[]>)o[1];
@@ -172,6 +185,7 @@ namespace CMTools
         }
         private List<List<String>> SQLDataTypes(List<List<String>> Data)
         {
+            //Regex rx = new Regex("0.0");
             foreach (var tabla in Data)
             {
                 for (int i = 1; i < tabla.Count(); i++)
@@ -180,11 +194,7 @@ namespace CMTools
                     String[] sep4 = { " " };
                     items = tabla[i].ToLower().Trim().Split(sep4, StringSplitOptions.RemoveEmptyEntries);
                     String typ = "";
-                    if (items[1].Contains("number") || items[1].Contains("numeric") || items[1].Contains("int"))
-                    {
-                        typ = "int";
-                    }
-                    else
+                    
                     if (items[1].Contains("varchar") || items[1].Contains("varchar2"))
                     {
                         typ = "string";
@@ -210,8 +220,18 @@ namespace CMTools
                         typ = "clob?";
                     }
                     else
+                    if (items[1].Contains("number") && (items[1].Contains("0.0") || items[2].Contains("0.0")))
                     {
-                        typ = "string";
+                        typ = "float";
+                    }
+                    else 
+                    if (items[1].Contains("number") || items[1].Contains("numeric") || items[1].Contains("int"))
+                    {
+                        typ = "int";
+                    }
+                    else
+                    {
+                        typ = "unknown";
                     }
                     bool c = true;
                     tabla[i] = Capitalize(items[0]) + ";" + typ;
@@ -615,7 +635,7 @@ namespace CMTools
                 Directory.CreateDirectory(ruta + "\\"+customNamespace+"\\");
                 if(lenguaje==Lenguaje.Python3 && CMConfig.MODELS)
                 {
-                    StreamWriter sw = new StreamWriter(ruta + "\\" + customNamespace + "\\models.py", false);
+                    StreamWriter sw = new StreamWriter(ruta + "\\" + customNamespace.Split('.').Last() + "\\models.py", false);
                     sw.Write(Escritura.Replace("*","\n"));
                     sw.Flush();
                     sw.Close();
@@ -624,7 +644,7 @@ namespace CMTools
                 {
                     for (int i = 0; i < clases.Count(); i++)
                     {
-                        StreamWriter sw = new StreamWriter(ruta + "\\" + customNamespace + "\\" + clases[i].ClassName + extension, false);
+                        StreamWriter sw = new StreamWriter(ruta + "\\" + customNamespace.Split('.').Last() + "\\" + clases[i].ClassName + extension, false);
                         if (identado || lenguaje == Lenguaje.Python3)
                         {
                             sw.Write(str[i]);
@@ -638,7 +658,7 @@ namespace CMTools
                     }
                 }
                 Console.WriteLine(ruta);
-                Process.Start("explorer", ruta+"\\" + customNamespace + "\\");
+                Process.Start("explorer", ruta+"\\" + customNamespace.Split('.').Last() + "\\");
             }catch(Exception e)
             {
                 Console.WriteLine(e);
@@ -679,6 +699,9 @@ namespace CMTools
                             algo = "String";
                             break;
                         case "clob?":
+                            algo = "String";
+                            break;
+                        case "unknown":
                             algo = "String";
                             break;
                     }
