@@ -632,7 +632,7 @@ namespace CMTools
             }
             try
             {
-                Directory.CreateDirectory(ruta + "\\"+customNamespace+"\\");
+                Directory.CreateDirectory(ruta + "\\"+customNamespace.Split('.').Last() + "\\");
                 if(lenguaje==Lenguaje.Python3 && CMConfig.MODELS)
                 {
                     StreamWriter sw = new StreamWriter(ruta + "\\" + customNamespace.Split('.').Last() + "\\models.py", false);
