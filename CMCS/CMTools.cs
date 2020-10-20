@@ -21,19 +21,25 @@ namespace CMTools
     {
         String DOCUMENT = "";
         bool CONSTRAINT = false;
-        //List<List<String>> DATA;
 
         public List<List<String>> SQLDocHandler(String file, out int DocSize)
         {
             LoadFile(file);
             var contenido = SQLLineSpliter(DOCUMENT);
             contenido = FileCharacterFilter(contenido);
-            Regex r = new Regex("[0-9],[0-9]");
+            Regex floatr = new Regex("[0-9],[0-9]");
+            List<Match> matches = new List<Match>();
+            Regex longr = new Regex("[8-9]");
+            Regex longr2 = new Regex("[0-9]{2}");
             for(int i =0;i < contenido.Count();i++)
             {
-                if (r.IsMatch(contenido[i]))
+                if (floatr.IsMatch(contenido[i]))
                 {
-                    contenido[i] = r.Replace(contenido[i], "0.0");
+                    contenido[i] = floatr.Replace(contenido[i], "0.0");
+                }
+                else if(longr.IsMatch(contenido[i]) || longr2.IsMatch(contenido[i]))
+                {
+                    contenido[i] = longr.Replace(contenido[i], "1.1");
                 }
             }
             var o = SQLTableFilter(contenido);
@@ -220,11 +226,16 @@ namespace CMTools
                         typ = "clob?";
                     }
                     else
-                    if (items[1].Contains("number") && (items[1].Contains("0.0") || items[2].Contains("0.0")))
+                    if ((items[1].Contains("number") || items[1].Contains("numeric")) && (items[1].Contains("0.0") || items[2].Contains("0.0")))
                     {
                         typ = "float";
                     }
                     else 
+                    if ((items[1].Contains("number") || items[1].Contains("numeric") || items[1].Contains("int")) && (items[1].Contains("1.1") || items[2].Contains("1.1")))
+                    {
+                        typ = "long";
+                    }
+                    else
                     if (items[1].Contains("number") || items[1].Contains("numeric") || items[1].Contains("int"))
                     {
                         typ = "int";
@@ -683,6 +694,12 @@ namespace CMTools
                         case "int":
                             algo = "int";
                             break;
+                        case "float":
+                            algo = "float";
+                            break;
+                        case "long":
+                            algo = "long";
+                            break;
                         case "string":
                             algo = "String";
                             break;
@@ -715,6 +732,12 @@ namespace CMTools
                         case "int":
                             algo = "int";
                             break;
+                        case "float":
+                            algo = "float";
+                            break;
+                        case "long":
+                            algo = "long";
+                            break;
                         case "string":
                             algo = "String";
                             break;
@@ -731,6 +754,9 @@ namespace CMTools
                             algo = "String";
                             break;
                         case "clob?":
+                            algo = "String";
+                            break;
+                        case "unknown":
                             algo = "String";
                             break;
                     }
@@ -758,6 +784,12 @@ namespace CMTools
                         case "int":
                             algo = "int";
                             break;
+                        case "float":
+                            algo = "float";
+                            break;
+                        case "long":
+                            algo = "long";
+                            break;
                         case "string":
                             algo = "String";
                             break;
@@ -774,6 +806,9 @@ namespace CMTools
                             algo = "String";
                             break;
                         case "clob?":
+                            algo = "String";
+                            break;
+                        case "unknown":
                             algo = "String";
                             break;
                     }
@@ -787,6 +822,12 @@ namespace CMTools
                         case "int":
                             algo = "int";
                             break;
+                        case "float":
+                            algo = "float";
+                            break;
+                        case "long":
+                            algo = "long";
+                            break;
                         case "string":
                             algo = "String";
                             break;
@@ -803,6 +844,9 @@ namespace CMTools
                             algo = "String";
                             break;
                         case "clob?":
+                            algo = "String";
+                            break;
+                        case "unknown":
                             algo = "String";
                             break;
                     }
@@ -830,8 +874,11 @@ namespace CMTools
                         switch (clases[i].IdType)
                         {
                             case "int":
+                            case "float":
+                            case "long":
                                 algo = "= models.FloatField()";
                                 break;
+                            case "unknown":
                             case "char":
                             case "blob?":
                             case "clob?":
