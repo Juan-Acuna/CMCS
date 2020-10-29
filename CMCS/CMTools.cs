@@ -590,8 +590,8 @@ namespace CMTools
                     String[] str = data[l][i].Split(';');
                     if (str.Count() > 2)
                     {
-                        c.Id = str[0];
-                        c.IdType = str[1];
+                        c.Ids.Add(str[0]);
+                        c.IdTypes.Add(str[1]);
                     }
                     else
                     {
@@ -687,12 +687,16 @@ namespace CMTools
                 str += partes[0].Replace("CUSTOMNAMESPACE", customNamespace);
                 str += partes[1].Replace("CLASSNAME", clases[i].ClassName);
                 String algo = "";
-                if (!clases[i].Id.Equals("N/A") && !clases[i].IdType.Equals("N/A"))
+                for (int l = 0; l < clases[i].Ids.Count(); l++)
                 {
-                    switch (clases[i].IdType)
+                    algo = "";
+                    switch (clases[i].IdTypes[l])
                     {
                         case "int":
                             algo = "int";
+                            break;
+                        case "double":
+                            algo = "double";
                             break;
                         case "float":
                             algo = "float";
@@ -722,15 +726,18 @@ namespace CMTools
                             algo = "String";
                             break;
                     }
-                    str += partes[2].Replace("DTYPE", algo).Replace("IDNAME", clases[i].Id);
+                    str += partes[2].Replace("DTYPE", algo).Replace("IDNAME", clases[i].Ids[l]);
                 }
-                for(int l = 0; l < clases[i].Atrs.Count(); l++)
+                for (int l = 0; l < clases[i].Atrs.Count(); l++)
                 {
                     algo = "";
                     switch (clases[i].Types[l])
                     {
                         case "int":
                             algo = "int";
+                            break;
+                        case "double":
+                            algo = "double";
                             break;
                         case "float":
                             algo = "float";
@@ -777,12 +784,16 @@ namespace CMTools
                 str += partes[0].Replace("CUSTOMNAMESPACE", customNamespace.ToLower());
                 str += partes[1].Replace("CLASSNAME", clases[i].ClassName);
                 String algo = "";
-                if (!clases[i].Id.Equals("N/A") && !clases[i].IdType.Equals("N/A"))
+                for (int l = 0; l < clases[i].Ids.Count(); l++)
                 {
-                    switch (clases[i].IdType)
+                    algo = "";
+                    switch (clases[i].IdTypes[l])
                     {
                         case "int":
                             algo = "int";
+                            break;
+                        case "double":
+                            algo = "double";
                             break;
                         case "float":
                             algo = "float";
@@ -812,7 +823,7 @@ namespace CMTools
                             algo = "String";
                             break;
                     }
-                    str += partes[2].Replace("DTYPE", algo).Replace("IDNAME", clases[i].Id);
+                    str += partes[2].Replace("DTYPE", algo).Replace("IDNAME", clases[i].Ids[l]);
                 }
                 for (int l = 0; l < clases[i].Atrs.Count(); l++)
                 {
@@ -821,6 +832,9 @@ namespace CMTools
                     {
                         case "int":
                             algo = "int";
+                            break;
+                        case "double":
+                            algo = "double";
                             break;
                         case "float":
                             algo = "float";
@@ -869,18 +883,19 @@ namespace CMTools
                 {
                     str += partes[1].Replace("CLASSNAME():", clases[i].ClassName+"(models.Model):");
                     String algo = "";
-                    if (!clases[i].Id.Equals("N/A") && !clases[i].IdType.Equals("N/A"))
+                    for (int l = 0; l < clases[i].Ids.Count(); l++)
                     {
-                        switch (clases[i].IdType)
+                        algo = "";
+                        switch (clases[i].IdTypes[l])
                         {
                             case "int":
+                            case "double":
                             case "float":
-                            case "long":
                                 algo = "= models.FloatField()";
                                 break;
-                            case "unknown":
                             case "char":
                             case "blob?":
+                            case "unknown":
                             case "clob?":
                             case "string":
                                 algo = "= models.TextField()";
@@ -892,7 +907,7 @@ namespace CMTools
                                 algo = "= models.BooleanField()";
                                 break;
                         }
-                        str += partes[2].Replace("DTYPE", algo).Replace("IDNAME", clases[i].Id);
+                        str += partes[2].Replace("DTYPE", algo).Replace("IDNAME", clases[i].Ids[l]);
                     }
                     for (int l = 0; l < clases[i].Atrs.Count(); l++)
                     {
@@ -900,10 +915,13 @@ namespace CMTools
                         switch (clases[i].Types[l])
                         {
                             case "int":
+                            case "double":
+                            case "float":
                                 algo = "= models.FloatField()";
                                 break;
                             case "char":
                             case "blob?":
+                            case "unknown":
                             case "clob?":
                             case "string":
                                 algo = "= models.TextField()";
@@ -927,9 +945,9 @@ namespace CMTools
                     String str = "";
                     str += partes[0].Replace("IMPORTS\n", "");
                     str += partes[1].Replace("CLASSNAME", clases[i].ClassName).Replace("IMPORTS", "");
-                    if (!clases[i].Id.Equals("N/A"))
+                    for (int l = 0; l < clases[i].Ids.Count(); l++)
                     {
-                        str += partes[2].Replace("IDNAME", clases[i].Id).Replace(" DTYPE", "");
+                        str += partes[2].Replace("IDNAME", clases[i].Ids[l]).Replace(" DTYPE", ""); ;
                     }
                     for (int l = 0; l < clases[i].Atrs.Count(); l++)
                     {
@@ -943,12 +961,14 @@ namespace CMTools
         class ClassFile
         {
             public String ClassName { get; set; }
-            public String Id = "N/A";
-            public String IdType = "N/A";
+            public List<String> Ids;
+            public List<String> IdTypes;
             public List<String> Atrs;
             public List<String> Types;
             public ClassFile()
             {
+                Ids = new List<string>();
+                IdTypes = new List<string>();
                 Atrs = new List<string>();
                 Types = new List<string>();
             }
