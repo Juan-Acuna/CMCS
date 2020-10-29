@@ -37,9 +37,13 @@ namespace CMTools
                 {
                     contenido[i] = floatr.Replace(contenido[i], "0.0");
                 }
-                else if(longr.IsMatch(contenido[i]) || longr2.IsMatch(contenido[i]))
+                else if(longr.IsMatch(contenido[i]))
                 {
                     contenido[i] = longr.Replace(contenido[i], "1.1");
+                }
+                else if (longr2.IsMatch(contenido[i]))
+                {
+                    contenido[i] = longr2.Replace(contenido[i], "1.1");
                 }
             }
             var o = SQLTableFilter(contenido);
