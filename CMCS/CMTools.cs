@@ -621,6 +621,9 @@ namespace CMTools
                 case Lenguaje.Python3:
                     l = MakePython3(Bases[2].Replace("PYTHON3=", ""));
                     break;
+                case Lenguaje.PHP:
+                    l = MakePHP(Bases[3].Replace("PHP=", ""));
+                    break;
             }
             foreach(var item in l)
             {
@@ -644,6 +647,9 @@ namespace CMTools
                 case Lenguaje.Python3:
                     extension = ".py";
                     break;
+                case Lenguaje.PHP:
+                    extension = ".php";
+                    break;
             }
             try
             {
@@ -654,6 +660,30 @@ namespace CMTools
                     sw.Write(Escritura.Replace("*","\n"));
                     sw.Flush();
                     sw.Close();
+                }
+                else if (lenguaje==Lenguaje.PHP)
+                {
+                    StreamWriter sw2 = new StreamWriter(ruta + "\\" + customNamespace.Split('.').Last() + "\\ProxyModelos.php", false);
+                    String pr = "<?php";
+                    for (int i = 0; i < clases.Count(); i++)
+                    {
+                        pr += "\ninclude_once '" + clases[i].ClassName + extension + "';";
+                        StreamWriter sw = new StreamWriter(ruta + "\\" + customNamespace.Split('.').Last() + "\\" + clases[i].ClassName + extension, false);
+                        if (identado)
+                        {
+                            sw.Write(str[i]);
+                        }
+                        else
+                        {
+                            sw.Write(str[i].Replace("\n", "").Replace("\r", "").Replace("\t", "").Replace("//PRIMARY KEY", "").Replace("#PRIMARY KEY", " ").Replace("  ", ""));
+                        }
+                        sw.Flush();
+                        sw.Close();
+                    }
+                    pr += "\nuse " + customNamespace.Replace('.', '\\') + ";\n?>";
+                    sw2.Write(pr);
+                    sw2.Flush();
+                    sw2.Close();
                 }
                 else
                 {
@@ -962,6 +992,28 @@ namespace CMTools
             }
             return lista;
         }
+        private List<String> MakePHP(String plant)
+        {
+            List<String> lista = new List<string>();
+            String[] partes = plant.Split('\'');
+            for (int i = 0; i < clases.Count(); i++)
+            {
+                String str = "";
+                str += partes[0].Replace("CUSTOMNAMESPACE", customNamespace);
+                str += partes[1].Replace("CLASSNAME", clases[i].ClassName);
+                for (int l = 0; l < clases[i].Ids.Count(); l++)
+                {
+                    str += partes[2].Replace("IDNAME", clases[i].Ids[l]); ;
+                }
+                for (int l = 0; l < clases[i].Atrs.Count(); l++)
+                {
+                    str += partes[3].Replace("VARNAME", clases[i].Atrs[l]); ;
+                }
+                str += partes[4];
+                lista.Add(str);
+            }
+            return lista;
+        }
         class ClassFile
         {
             public String ClassName { get; set; }
@@ -995,6 +1047,7 @@ namespace CMTools
     {
         CSharp,
         Java,
-        Python3
+        Python3,
+        PHP
     }
 }

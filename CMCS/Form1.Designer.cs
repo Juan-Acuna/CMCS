@@ -76,7 +76,7 @@
             this.label1.Font = new System.Drawing.Font("Microsoft YaHei UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(7, 11);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(108, 31);
+            this.label1.Size = new System.Drawing.Size(86, 26);
             this.label1.TabIndex = 1;
             this.label1.Text = "Entrada";
             // 
@@ -86,7 +86,7 @@
             this.label2.Font = new System.Drawing.Font("Microsoft YaHei UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(417, 11);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(86, 31);
+            this.label2.Size = new System.Drawing.Size(70, 26);
             this.label2.TabIndex = 2;
             this.label2.Text = "Salida";
             // 
@@ -96,7 +96,7 @@
             this.label3.Font = new System.Drawing.Font("Microsoft YaHei UI", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.Location = new System.Drawing.Point(15, 23);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(129, 20);
+            this.label3.Size = new System.Drawing.Size(102, 16);
             this.label3.TabIndex = 3;
             this.label3.Text = "Archivo de origen";
             // 
@@ -107,7 +107,7 @@
             this.chkClases.Location = new System.Drawing.Point(20, 113);
             this.chkClases.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.chkClases.Name = "chkClases";
-            this.chkClases.Size = new System.Drawing.Size(111, 24);
+            this.chkClases.Size = new System.Drawing.Size(89, 20);
             this.chkClases.TabIndex = 4;
             this.chkClases.Text = "Crear Clases";
             this.chkClases.UseVisualStyleBackColor = true;
@@ -120,7 +120,7 @@
             this.chkCM.Location = new System.Drawing.Point(20, 204);
             this.chkCM.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.chkCM.Name = "chkCM";
-            this.chkCM.Size = new System.Drawing.Size(213, 24);
+            this.chkCM.Size = new System.Drawing.Size(168, 20);
             this.chkCM.TabIndex = 5;
             this.chkCM.Text = "Crear \"CommandManager\"";
             this.chkCM.UseVisualStyleBackColor = true;
@@ -168,7 +168,7 @@
             this.label4.Font = new System.Drawing.Font("Microsoft YaHei UI", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.Location = new System.Drawing.Point(17, 23);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(136, 20);
+            this.label4.Size = new System.Drawing.Size(106, 16);
             this.label4.TabIndex = 9;
             this.label4.Text = "Carpeta de destino";
             // 
@@ -178,7 +178,7 @@
             this.lbLenguaje.Font = new System.Drawing.Font("Microsoft YaHei UI", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbLenguaje.Location = new System.Drawing.Point(44, 152);
             this.lbLenguaje.Name = "lbLenguaje";
-            this.lbLenguaje.Size = new System.Drawing.Size(71, 20);
+            this.lbLenguaje.Size = new System.Drawing.Size(56, 16);
             this.lbLenguaje.TabIndex = 10;
             this.lbLenguaje.Text = "Lenguaje";
             // 
@@ -227,7 +227,7 @@
             this.txtEntrada.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtEntrada.Name = "txtEntrada";
             this.txtEntrada.ReadOnly = true;
-            this.txtEntrada.Size = new System.Drawing.Size(287, 24);
+            this.txtEntrada.Size = new System.Drawing.Size(287, 21);
             this.txtEntrada.TabIndex = 4;
             this.txtEntrada.TabStop = false;
             this.txtEntrada.TextChanged += new System.EventHandler(this.txtEntrada_TextChanged);
@@ -280,7 +280,7 @@
             this.chkIClases.AutoSize = true;
             this.chkIClases.Location = new System.Drawing.Point(263, 115);
             this.chkIClases.Name = "chkIClases";
-            this.chkIClases.Size = new System.Drawing.Size(145, 24);
+            this.chkIClases.Size = new System.Drawing.Size(115, 20);
             this.chkIClases.TabIndex = 15;
             this.chkIClases.Text = "Codigo Identado";
             this.chkIClases.UseVisualStyleBackColor = true;
@@ -291,7 +291,7 @@
             this.lbMotor.Font = new System.Drawing.Font("Microsoft YaHei UI", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbMotor.Location = new System.Drawing.Point(44, 251);
             this.lbMotor.Name = "lbMotor";
-            this.lbMotor.Size = new System.Drawing.Size(102, 20);
+            this.lbMotor.Size = new System.Drawing.Size(80, 16);
             this.lbMotor.TabIndex = 14;
             this.lbMotor.Text = "Base de datos";
             // 
@@ -302,7 +302,7 @@
             this.txtSalida.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtSalida.Name = "txtSalida";
             this.txtSalida.ReadOnly = true;
-            this.txtSalida.Size = new System.Drawing.Size(288, 24);
+            this.txtSalida.Size = new System.Drawing.Size(288, 21);
             this.txtSalida.TabIndex = 13;
             this.txtSalida.TabStop = false;
             // 
@@ -318,7 +318,7 @@
             this.cbMotor.Location = new System.Drawing.Point(130, 248);
             this.cbMotor.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbMotor.Name = "cbMotor";
-            this.cbMotor.Size = new System.Drawing.Size(119, 27);
+            this.cbMotor.Size = new System.Drawing.Size(119, 24);
             this.cbMotor.TabIndex = 12;
             this.cbMotor.Text = "Seleccione motor";
             // 
@@ -329,11 +329,12 @@
             this.cbLenguaje.Items.AddRange(new object[] {
             "C#",
             "JAVA",
-            "Python3"});
+            "Python3",
+            "PHP"});
             this.cbLenguaje.Location = new System.Drawing.Point(130, 149);
             this.cbLenguaje.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbLenguaje.Name = "cbLenguaje";
-            this.cbLenguaje.Size = new System.Drawing.Size(119, 27);
+            this.cbLenguaje.Size = new System.Drawing.Size(119, 24);
             this.cbLenguaje.TabIndex = 11;
             this.cbLenguaje.Text = "Seleccione lenguaje";
             // 
@@ -348,7 +349,7 @@
             // 
             // CMC
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(837, 438);
             this.Controls.Add(this.panel2);

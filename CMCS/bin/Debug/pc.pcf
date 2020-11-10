@@ -19,3 +19,11 @@ namespace CUSTOMNAMESPACE
 class CLASSNAME():'
     IDNAME DTYPE #PRIMARY KEY'
     VARNAME DTYPE
+"PHP=<?php
+namespace CUSTOMNAMESPACE;
+'class CLASSNAME{
+'
+    public $IDNAME; //PRIMARY KEY'
+    public $VARNAME;'
+}
+?>
